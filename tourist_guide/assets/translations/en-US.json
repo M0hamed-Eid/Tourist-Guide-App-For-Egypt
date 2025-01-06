@@ -1,0 +1,57 @@
+{
+  "app": {
+    "title": "Explore Egypt",
+    "sections": {
+      "suggested_places": "Suggested Places to Visit",
+      "popular_places": "Popular Places"
+    },
+    "navigation": {
+      "home": "Home",
+      "governments": "Governments",
+      "favorites": "Favorites",
+      "profile": "Profile"
+    }
+  },
+  "places": {
+    "pyramids": {
+      "name": "Pyramids of Giza",
+      "description": "Ancient Egyptian pyramids complex"
+    },
+    "karnak": {
+      "name": "Karnak Temple",
+      "description": "Ancient Egyptian temple complex"
+    },
+    "library": {
+      "name": "Alexandria Library",
+      "description": "Modern library and cultural center"
+    },
+    "valley_kings": {
+      "name": "Valley of the Kings",
+      "description": "Ancient Egyptian royal tombs"
+    },
+    "museum": {
+      "name": "Egyptian Museum",
+      "description": "Museum of ancient Egyptian antiquities"
+    },
+    "abu_simbel": {
+      "name": "Abu Simbel",
+      "description": "Two massive rock temples in southern Egypt"
+    },
+    "siwa": {
+      "name": "Siwa Oasis",
+      "description": "An urban oasis in Egypt's Western Desert"
+    },
+    "citadel": {
+      "name": "Citadel of Qaitbay",
+      "description": "15th-century defensive fortress"
+    }
+  },
+  "governorates": {
+    "giza": "Giza",
+    "cairo": "Cairo",
+    "luxor": "Luxor",
+    "aswan": "Aswan",
+    "alexandria": "Alexandria",
+    "matrouh": "Matrouh"
+  }
+}
