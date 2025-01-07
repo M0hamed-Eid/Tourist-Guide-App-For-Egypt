@@ -33,7 +33,7 @@ class TouristGuideApp extends StatelessWidget {
       title: 'Egypt Tourist Guide',
       theme: AppTheme.lightTheme,
       onGenerateRoute: AppRouter.generateRoute,
-      initialRoute: AppRouter.home,
+      initialRoute: AppRouter.login,
     );
   }
 }

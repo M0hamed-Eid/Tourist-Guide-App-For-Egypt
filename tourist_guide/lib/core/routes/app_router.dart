@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tourist_guide/screens/auth/signup/signup_page.dart';
+import '../../screens/auth/login/login_page.dart';
 import '../../screens/favorites/favorites_page.dart';
 import '../../screens/governments/governments_page.dart';
 import '../../screens/home/home.dart';
-import '../../screens/login/login_page.dart';
 import '../../screens/profile/profile_page.dart';
 import '../theme/app_colors.dart';
 import 'route_transitions.dart';
@@ -17,8 +18,8 @@ class AppRouter {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
-/*      case signup:
-        return RouteTransitions.fadeTransition(const SignupPage());*/
+      case signup:
+        return RouteTransitions.fadeTransition(const SignUpPage());
       case login:
         return RouteTransitions.fadeTransition(LoginPage());
       case home:
