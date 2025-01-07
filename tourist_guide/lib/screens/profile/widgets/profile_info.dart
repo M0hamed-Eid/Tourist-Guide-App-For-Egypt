@@ -5,12 +5,14 @@ import 'package:tourist_guide/core/utils/responsive_utils.dart';
 class ProfileInfo extends StatelessWidget {
   final String fullName;
   final String email;
+  final String phone;
   final String hashedPassword;
 
   const ProfileInfo(
       {super.key,
       required this.fullName,
       required this.email,
+      required this.phone,
       required this.hashedPassword});
 
   @override
@@ -31,7 +33,7 @@ class ProfileInfo extends StatelessWidget {
           spacing: 20,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Avatar and full name
+            // Avatar
             CircleAvatar(
               backgroundColor: Colors.grey,
               maxRadius: 50,
@@ -42,10 +44,10 @@ class ProfileInfo extends StatelessWidget {
               ),
             ),
 
-            // Email and hashed password
+            // Info
             Expanded(
               child: Column(
-                spacing: 10,
+                spacing: 5,
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -56,15 +58,21 @@ class ProfileInfo extends StatelessWidget {
                     ),
                   ),
                   Text(
+                    phone,
+                    style: AppTextTheme.textTheme.bodyMedium!.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
                     email,
-                     style: AppTextTheme.textTheme.bodyMedium!.copyWith(
+                    style: AppTextTheme.textTheme.bodyMedium!.copyWith(
                       color: Colors.white,
                     ),
                   ),
                   Text(
                     hashedPassword,
                     overflow: TextOverflow.ellipsis,
-                     style: AppTextTheme.textTheme.bodyMedium!.copyWith(
+                    style: AppTextTheme.textTheme.bodyMedium!.copyWith(
                       color: Colors.white,
                     ),
                   ),
