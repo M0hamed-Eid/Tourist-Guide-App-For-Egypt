@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../core/theme/app_colors.dart';
@@ -123,19 +124,22 @@ class _SignUpPageState extends State<SignUpPage>{
                       return null;
                     },
                   ),
-                  CustomTextFormFieldAuth(hintText: "Enter Your Phone Number",
-                    obscuretext: false,
-                    labalText: "Phone Number",
-                    iconData: Icons.phone,
-                    mycontroller: phoneController,
-                    isNunmber: true,
-                    valid: (val) {
-                      if(val == null||val.isEmpty){
-                        return "Phone Number is required ";
-                      }if (val.length>11 && val.length<6){
-                        return "Phone must be greater than 6 and less than 12 ";
-                      }
-                      return null;
+
+                  IntlPhoneField(
+                    decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.always,
+                      contentPadding:const EdgeInsets.symmetric(vertical: 5,horizontal: 25),
+                      labelText: 'Phone Number',
+                      suffixIcon: Icon(Icons.phone),
+                      hintText: "Enter your phone number",
+                      hintStyle:const TextStyle(fontSize: 14),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    initialCountryCode: 'IN',
+                    onChanged: (phone) {
+                      print(phone.completeNumber);
                     },
                   ),
                   CustomButtonAuth(text: "sign Up",
