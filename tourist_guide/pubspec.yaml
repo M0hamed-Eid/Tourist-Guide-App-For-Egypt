@@ -38,6 +38,7 @@ dependencies:
   easy_localization: ^3.0.7
   crypto: ^3.0.6
   shared_preferences: ^2.3.5
+  intl_phone_field: ^3.2.0
 
 
 dev_dependencies:
