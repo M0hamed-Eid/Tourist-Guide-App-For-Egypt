@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tourist_guide/core/mixins/validation_mixin.dart';
 import 'package:tourist_guide/screens/auth/widgets/custom_text_auth.dart';
 
 import '../../../core/routes/app_router.dart';
@@ -15,7 +16,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginPage> {
+class _LoginScreenState extends State<LoginPage> with ValidationMixin{
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -69,14 +70,7 @@ class _LoginScreenState extends State<LoginPage> {
                   iconData: Icons.email_outlined,
                   mycontroller: emailController,
                   isNunmber: false,
-                  valid: (val) {
-                    if(val == null||val.isEmpty){
-                      return "Email is required ";
-                    }if (!val.contains("@")){
-                      return "Email must contain '@'";
-                    }
-                    return null;
-                  },
+                  valid: validateEmail,
                 ),
                 CustomTextFormFieldAuth(hintText: "Enter your Password",
                   obscuretext: isShowPassword,
@@ -85,14 +79,7 @@ class _LoginScreenState extends State<LoginPage> {
                   iconData: isShowPassword?Icons.lock_outline:Icons.lock_open,
                   mycontroller: passController,
                   isNunmber: false,
-                  valid: (val) {
-                    if(val == null||val.isEmpty){
-                      return "Password is required ";
-                    }if (val.length<6){
-                      return "Password must be at least 6 characters";
-                    }
-                    return null;
-                  },
+                  valid:validatePassword,
                 ),
                 InkWell(
                   child: const Align(
