@@ -14,19 +14,17 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage>{
-
+class _SignUpPageState extends State<SignUpPage> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  TextEditingController emailController=TextEditingController();
-  TextEditingController passController=TextEditingController();
-  TextEditingController phoneController=TextEditingController();
-  TextEditingController nameController=TextEditingController();
-
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   bool isShowPassword = true;
 
-  showPassword(){
+  showPassword() {
     isShowPassword = isShowPassword == true ? false : true;
     setState(() {});
   }
@@ -66,86 +64,95 @@ class _SignUpPageState extends State<SignUpPage>{
     validateAndSubmit();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15,horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Form(
           key: formKey,
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  CustomTextAuth(text1: "Sign up", text2: "Create your account"),
-                  CustomTextFormFieldAuth(hintText: "Enter your Full Name",
+                  CustomTextAuth(
+                      text1: "Sign up", text2: "Create your account"),
+                  CustomTextFormFieldAuth(
+                    hintText: "Enter your Full Name",
                     labalText: "Full Name",
                     iconData: Icons.person_outline,
                     mycontroller: nameController,
                     isNunmber: false,
                     valid: (val) {
-                      if(val == null||val.isEmpty){
+                      if (val == null || val.isEmpty) {
                         return "Full Name is required ";
-                      }if (val[0] != val[0].toUpperCase()){
+                      }
+                      if (val[0] != val[0].toUpperCase()) {
                         return "The First letter must be capitalized";
                       }
                       return null;
                     },
                   ),
-                  CustomTextFormFieldAuth(hintText: "Enter your email",
+                  CustomTextFormFieldAuth(
+                    hintText: "Enter your email",
                     labalText: "Email",
                     iconData: Icons.email_outlined,
                     mycontroller: emailController,
                     isNunmber: false,
                     valid: (val) {
-                      if(val == null||val.isEmpty){
+                      if (val == null || val.isEmpty) {
                         return "Email is required ";
-                      }if (!val.contains("@")){
+                      }
+                      if (!val.contains("@")) {
                         return "Email must contain '@'";
                       }
                       return null;
                     },
                   ),
-                  CustomTextFormFieldAuth(hintText: "Enter your Password",
+                  CustomTextFormFieldAuth(
+                    hintText: "Enter your Password",
                     obscuretext: isShowPassword,
                     onTapIcon: showPassword,
                     labalText: "Password",
-                    iconData: isShowPassword?Icons.lock_outline:Icons.lock_open,
+                    iconData:
+                        isShowPassword ? Icons.lock_outline : Icons.lock_open,
                     mycontroller: passController,
                     isNunmber: false,
                     valid: (val) {
-                      if(val == null||val.isEmpty){
+                      if (val == null || val.isEmpty) {
                         return "Password is required ";
-                      }if (val.length<6){
+                      }
+                      if (val.length < 6) {
                         return "Password must be at least 6 characters";
                       }
                       return null;
                     },
                   ),
-
                   IntlPhoneField(
                     decoration: InputDecoration(
                       floatingLabelBehavior: FloatingLabelBehavior.always,
-                      contentPadding:const EdgeInsets.symmetric(vertical: 5,horizontal: 25),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 25),
                       labelText: 'Phone Number',
                       suffixIcon: Icon(Icons.phone),
                       hintText: "Enter your phone number",
-                      hintStyle:const TextStyle(fontSize: 14),
+                      hintStyle: const TextStyle(fontSize: 14),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    initialCountryCode: 'IN',
+                    // controller: phoneController,
+                    initialCountryCode: 'EG',
                     onChanged: (phone) {
-                      print(phone.completeNumber);
+                      phoneController.text = phone.completeNumber;
                     },
                   ),
-                  CustomButtonAuth(text: "sign Up",
-                    onpressed:() {
+                  CustomButtonAuth(
+                    text: "sign Up",
+                    onpressed: () {
                       saveSignupData();
-                    },),
+                    },
+                  ),
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -153,13 +160,17 @@ class _SignUpPageState extends State<SignUpPage>{
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text("Already have an account? "),
-                          InkWell(child: const Text("Login",
-                            style: TextStyle(color: AppColors.primary,
+                          InkWell(
+                            child: const Text(
+                              "Login",
+                              style: TextStyle(
+                                color: AppColors.primary,
+                              ),
                             ),
-                          ),
-                            onTap: (){
+                            onTap: () {
                               Navigator.pushNamed(context, AppRouter.login);
-                            },),
+                            },
+                          ),
                         ],
                       ),
                     ),
