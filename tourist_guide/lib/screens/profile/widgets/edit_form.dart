@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:tourist_guide/core/mixins/validation_mixin.dart';
 import 'package:tourist_guide/core/theme/text_themes.dart';
+import 'package:tourist_guide/screens/auth/widgets/custom_txt_field_auth.dart';
 
-class EditForm extends StatelessWidget {
+class EditForm extends StatelessWidget with ValidationMixin {
   final TextEditingController fullNameController;
   final TextEditingController emailController;
   final TextEditingController phoneController;
@@ -27,21 +30,49 @@ class EditForm extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextField(
-                controller: fullNameController,
-                decoration: const InputDecoration(labelText: 'Full Name'),
+              CustomTextFormFieldAuth(
+                  hintText: "Enter your Full Name",
+                  labalText: "Full Name",
+                  iconData: Icons.person_outline,
+                  mycontroller: fullNameController,
+                  isNunmber: false,
+                  valid: validateName),
+              CustomTextFormFieldAuth(
+                hintText: "Enter your email",
+                labalText: "Email",
+                iconData: Icons.email_outlined,
+                mycontroller: emailController,
+                isNunmber: false,
+                valid: validateEmail,
               ),
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+              CustomTextFormFieldAuth(
+                hintText: "Enter your Password",
+                labalText: "Password",
+                iconData: Icons.lock_outline,
+                mycontroller: passwordController,
+                isNunmber: false,
+                valid: validatePassword,
               ),
-              TextField(
-                controller: phoneController,
-                decoration: const InputDecoration(labelText: 'Phone'),
-              ),
-              TextField(
-                controller: passwordController,
-                decoration: const InputDecoration(labelText: 'Password'),
+              IntlPhoneField(
+                decoration: InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+                  labelText: 'Phone Number',
+                  suffixIcon: Icon(Icons.phone),
+                  hintText: "Enter your phone number",
+                  hintStyle: const TextStyle(fontSize: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+                // controller: phoneController,
+                // get the 4th value till the end
+                initialValue: phoneController.text.substring(3),
+                initialCountryCode: 'EG',
+                onChanged: (phone) {
+                  phoneController.text = phone.completeNumber;
+                },
               ),
               const SizedBox(height: 16),
               ElevatedButton(

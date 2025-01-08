@@ -69,9 +69,6 @@ class _ProfilePageState extends State<ProfilePage> {
     await prefs.setString('phone', phoneController.text);
     await prefs.setString('password', passwordController.text);
 
-    // print('password: ${phoneController.text}');
-
-    // Update local variables
     fullName = fullNameController.text;
     email = emailController.text;
     phone = phoneController.text;
