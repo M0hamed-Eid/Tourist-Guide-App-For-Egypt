@@ -10,8 +10,9 @@ class EditForm extends StatelessWidget with ValidationMixin {
   final TextEditingController phoneController;
   final TextEditingController passwordController;
   final VoidCallback onApply;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  const EditForm({
+   EditForm({
     super.key,
     required this.fullNameController,
     required this.emailController,
@@ -28,67 +29,72 @@ class EditForm extends StatelessWidget with ValidationMixin {
         elevation: 4,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              CustomTextFormFieldAuth(
-                  hintText: "Enter your Full Name",
-                  labalText: "Full Name",
-                  iconData: Icons.person_outline,
-                  mycontroller: fullNameController,
+          child: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                CustomTextFormFieldAuth(
+                    hintText: "Enter your Full Name",
+                    labalText: "Full Name",
+                    iconData: Icons.person_outline,
+                    mycontroller: fullNameController,
+                    isNunmber: false,
+                    valid: validateName),
+                CustomTextFormFieldAuth(
+                  hintText: "Enter your email",
+                  labalText: "Email",
+                  iconData: Icons.email_outlined,
+                  mycontroller: emailController,
                   isNunmber: false,
-                  valid: validateName),
-              CustomTextFormFieldAuth(
-                hintText: "Enter your email",
-                labalText: "Email",
-                iconData: Icons.email_outlined,
-                mycontroller: emailController,
-                isNunmber: false,
-                valid: validateEmail,
-              ),
-              CustomTextFormFieldAuth(
-                hintText: "Enter your Password",
-                labalText: "Password",
-                iconData: Icons.lock_outline,
-                mycontroller: passwordController,
-                isNunmber: false,
-                valid: validatePassword,
-              ),
-              IntlPhoneField(
-                decoration: InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
-                  labelText: 'Phone Number',
-                  suffixIcon: Icon(Icons.phone),
-                  hintText: "Enter your phone number",
-                  hintStyle: const TextStyle(fontSize: 14),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
+                  valid: validateEmail,
+                ),
+                CustomTextFormFieldAuth(
+                  hintText: "Enter your Password",
+                  labalText: "Password",
+                  iconData: Icons.lock_outline,
+                  mycontroller: passwordController,
+                  isNunmber: false,
+                  valid: validatePassword,
+                ),
+                IntlPhoneField(
+                  decoration: InputDecoration(
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    contentPadding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 25),
+                    labelText: 'Phone Number',
+                    suffixIcon: Icon(Icons.phone),
+                    hintText: "Enter your phone number",
+                    hintStyle: const TextStyle(fontSize: 14),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  // controller: phoneController,
+                  // get the 4th value till the end
+                  initialValue: phoneController.text.substring(3),
+                  initialCountryCode: 'EG',
+                  onChanged: (phone) {
+                    phoneController.text = phone.completeNumber;
+                  },
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed:()=>{ 
+                    if(formKey.currentState!.validate()) onApply()
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: Size(double.infinity, 50),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
+                  child: Text(
+                    'Apply Changes',
+                    style: AppTextTheme.textTheme.bodyLarge!.copyWith(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                // controller: phoneController,
-                // get the 4th value till the end
-                initialValue: phoneController.text.substring(3),
-                initialCountryCode: 'EG',
-                onChanged: (phone) {
-                  phoneController.text = phone.completeNumber;
-                },
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: onApply,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                  backgroundColor: Theme.of(context).primaryColor,
-                ),
-                child: Text(
-                  'Apply Changes',
-                  style: AppTextTheme.textTheme.bodyLarge!.copyWith(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
