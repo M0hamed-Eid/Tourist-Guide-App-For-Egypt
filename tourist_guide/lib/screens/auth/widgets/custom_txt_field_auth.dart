@@ -10,11 +10,11 @@ class CustomTextFormFieldAuth extends StatelessWidget {
   final bool? obscuretext;
   final void Function()? onTapIcon;
 
-  const CustomTextFormFieldAuth({Key? key,
+  const CustomTextFormFieldAuth({super.key,
     required this.hintText, required this.labalText,
     required this.iconData, required this.mycontroller,
     required this.valid, required this.isNunmber,
-    this.obscuretext ,this.onTapIcon}) : super(key: key);
+    this.obscuretext ,this.onTapIcon});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class CustomTextFormFieldAuth extends StatelessWidget {
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding:const EdgeInsets.symmetric(vertical: 5,horizontal: 25),
           label: Text(labalText),
-          suffixIcon:InkWell(child: Icon(iconData),onTap:onTapIcon ,) ,
+          suffixIcon:InkWell(onTap:onTapIcon ,child: Icon(iconData),) ,
           hintText: hintText,
           hintStyle:const TextStyle(fontSize: 14),
           border: OutlineInputBorder(

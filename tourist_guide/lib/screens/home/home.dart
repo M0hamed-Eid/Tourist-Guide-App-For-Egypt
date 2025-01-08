@@ -2,8 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tourist_guide/screens/home/widgets/app_bar.dart';
 import 'package:tourist_guide/screens/home/widgets/popular_places.dart';
-import '../../core/routes/app_router.dart';
-import '../../core/theme/app_colors.dart';
 import '../base_page.dart';
 import 'widgets/suggested_places.dart';
 

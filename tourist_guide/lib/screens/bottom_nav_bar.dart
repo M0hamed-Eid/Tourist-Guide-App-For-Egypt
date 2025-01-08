@@ -10,10 +10,10 @@ class CustomBottomNavBar extends StatelessWidget {
   final Function(int) onTap;
 
   const CustomBottomNavBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   static final List<({IconData icon, IconData activeIcon, String route, String labelKey})> _navItems = [
     (

@@ -5,7 +5,7 @@ import '../../../core/theme/app_colors.dart';
 class CustomButtonAuth extends StatelessWidget {
   final String text;
   final void Function()? onpressed;
-  const CustomButtonAuth({Key? key, required this.text, this.onpressed}) : super(key: key);
+  const CustomButtonAuth({super.key, required this.text, this.onpressed});
 
   @override
   Widget build(BuildContext context) {

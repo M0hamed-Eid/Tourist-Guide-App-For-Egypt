@@ -8,11 +8,11 @@ class BasePage extends StatefulWidget {
   final int currentIndex;
 
   const BasePage({
-    Key? key,
+    super.key,
     required this.body,
     this.appBar,
     required this.currentIndex,
-  }) : super(key: key);
+  });
 
   @override
   BasePageState createState() => BasePageState();
