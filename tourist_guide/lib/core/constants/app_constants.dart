@@ -2,7 +2,6 @@ import '../../gen/assets.gen.dart';
 import '../models/place.dart';
 
 class AppConstants {
-
   static List<Place> suggestedPlaces = [
     Place(
       id: '1',
@@ -64,4 +63,6 @@ class AppConstants {
       descriptionKey: 'places.citadel.description',
     ),
   ];
+
+  static List<Place> get allPlaces => [...suggestedPlaces, ...popularPlaces];
 }
