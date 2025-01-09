@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class FavoritesProvider extends ChangeNotifier {
-  final List<String> _favoritePlaces = []; // Changed from Set to List
+  final List<String> _favoritePlaces = []; 
 
   bool isFavorite(String placeId) => _favoritePlaces.contains(placeId);
   
@@ -11,7 +11,7 @@ class FavoritesProvider extends ChangeNotifier {
     if (_favoritePlaces.contains(placeId)) {
       _favoritePlaces.remove(placeId);
     } else {
-      _favoritePlaces.add(placeId); // Will be added at the end of the list
+      _favoritePlaces.add(placeId); 
     }
     notifyListeners();
   }
