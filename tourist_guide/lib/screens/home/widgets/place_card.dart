@@ -45,7 +45,7 @@ class PlaceCardState extends State<PlaceCard> {
             top: 8,
             right: 8,
             child: CircleAvatar(
-              backgroundColor: AppColors.surface.withOpacity(0.7),
+              backgroundColor: AppColors.surface.withValues(),
               child: IconButton(
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border,
