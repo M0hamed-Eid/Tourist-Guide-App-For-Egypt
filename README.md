@@ -12,14 +12,7 @@ A comprehensive mobile application designed to help tourists explore the beautif
 - User reviews and ratings
 - Offline access to essential information
 
-## Technologies Used
-- Frontend: [Specify framework/technology]
-- Backend: [Specify framework/technology]
-- Database: [Specify database]
-
 ## Getting Started
-### Prerequisites
-- [List prerequisites]
 
 ### Installation
 1. Clone the repository
