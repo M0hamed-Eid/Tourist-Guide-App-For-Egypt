@@ -13,22 +13,47 @@
     }
   },
 
-  "title": "محافظات مصر",
-  "cairo": "القاهرة",
-  "alexandria": "الإسكندرية",
-  "luxor": "الأقصر",
-  "pyramids": "أهرامات الجيزة",
-  "pyramids_info": "أهرامات مشهورة في مصر.",
-  "cairo_tower": "برج القاهرة",
-  "cairo_tower_info": "معلم حديث في القاهرة.",
-  "library_of_alexandria": "مكتبة الإسكندرية",
-  "library_of_alexandria_info": "مكتبة تاريخية في الإسكندرية.",
-  "citadel_of_qaitbay": "قلعة قايتباي",
-  "citadel_of_qaitbay_info": "قلعة تعود للقرن الخامس عشر.",
-  "karnak_temple": "معبد الكرنك",
-  "karnak_temple_info": "مجمع معابد مصري قديم.",
-  "valley_of_kings": "وادي الملوك",
-  "valley_of_kings_info": "مكان دفن الفراعنة.",
-  "tap_to_view_landmarks": "اضغط لعرض المعالم",
-  "language_switch": "تغيير اللغة"
+  "places": {
+    "pyramids": {
+      "name": "أهرامات الجيزة",
+      "description": "أهرامات مصر القديمة الشهيرة"
+    },
+    "karnak": {
+      "name": "معبد الكرنك",
+      "description": "مجمع معابد مصري قديم ضخم"
+    },
+    "library": {
+      "name": "مكتبة الإسكندرية",
+      "description": "مكتبة تاريخية في الإسكندرية"
+    },
+    "valley_kings": {
+      "name": "وادي الملوك",
+      "description": "مقابر الفراعنة"
+    },
+    "museum": {
+      "name": "المتحف المصري",
+      "description": "موطن القطع الأثرية المصرية القديمة"
+    },
+    "abu_simbel": {
+      "name": "معابد أبو سمبل",
+      "description": "معابد رمسيس الثاني القديمة"
+    },
+    "siwa": {
+      "name": "واحة سيوة",
+      "description": "واحة صحراوية جميلة"
+    },
+    "citadel": {
+      "name": "قلعة قايتباي",
+      "description": "حصن ساحلي من القرن الخامس عشر"
+    }
+  },
+
+  "governorates": {
+    "cairo": "القاهرة",
+    "alexandria": "الإسكندرية",
+    "luxor": "الأقصر",
+    "giza": "الجيزة",
+    "aswan": "أسوان",
+    "matrouh": "مطروح"
+  }
 }
