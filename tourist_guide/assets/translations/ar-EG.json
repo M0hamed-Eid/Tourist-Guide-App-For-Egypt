@@ -12,46 +12,23 @@
       "profile": "الملف الشخصي"
     }
   },
-  "places": {
-    "pyramids": {
-      "name": "أهرامات الجيزة",
-      "description": "إحدى عجائب الدنيا السبع القديمة"
-    },
-    "karnak": {
-      "name": "معبد الكرنك",
-      "description": "أكبر موقع ديني في العالم القديم"
-    },
-    "library": {
-      "name": "مكتبة الإسكندرية",
-      "description": "مكتبة ومركز ثقافي حديث"
-    },
-    "valley_kings": {
-      "name": "وادي الملوك",
-      "description": "مقابر ملكية مصرية قديمة"
-    },
-    "museum": {
-      "name": "المتحف المصري",
-      "description": "موطن أكبر مجموعة من الآثار المصرية القديمة في العالم"
-    },
-    "abu_simbel": {
-      "name": "أبو سمبل",
-      "description": "معبدان ضخمان منحوتان في الصخر في جنوب مصر"
-    },
-    "siwa": {
-      "name": "واحة سيوة",
-      "description": "واحة حضرية في الصحراء الغربية المصرية"
-    },
-    "citadel": {
-      "name": "قلعة قايتباي",
-      "description": "حصن دفاعي من القرن الخامس عشر"
-    }
-  },
-  "governorates": {
-    "giza": "الجيزة",
-    "cairo": "القاهرة",
-    "luxor": "الأقصر",
-    "aswan": "أسوان",
-    "alexandria": "الإسكندرية",
-    "matrouh": "مطروح"
-  }
+
+  "title": "محافظات مصر",
+  "cairo": "القاهرة",
+  "alexandria": "الإسكندرية",
+  "luxor": "الأقصر",
+  "pyramids": "أهرامات الجيزة",
+  "pyramids_info": "أهرامات مشهورة في مصر.",
+  "cairo_tower": "برج القاهرة",
+  "cairo_tower_info": "معلم حديث في القاهرة.",
+  "library_of_alexandria": "مكتبة الإسكندرية",
+  "library_of_alexandria_info": "مكتبة تاريخية في الإسكندرية.",
+  "citadel_of_qaitbay": "قلعة قايتباي",
+  "citadel_of_qaitbay_info": "قلعة تعود للقرن الخامس عشر.",
+  "karnak_temple": "معبد الكرنك",
+  "karnak_temple_info": "مجمع معابد مصري قديم.",
+  "valley_of_kings": "وادي الملوك",
+  "valley_of_kings_info": "مكان دفن الفراعنة.",
+  "tap_to_view_landmarks": "اضغط لعرض المعالم",
+  "language_switch": "تغيير اللغة"
 }

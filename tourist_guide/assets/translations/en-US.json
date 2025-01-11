@@ -12,46 +12,24 @@
       "profile": "Profile"
     }
   },
-  "places": {
-    "pyramids": {
-      "name": "Pyramids of Giza",
-      "description": "Ancient Egyptian pyramids complex"
-    },
-    "karnak": {
-      "name": "Karnak Temple",
-      "description": "Ancient Egyptian temple complex"
-    },
-    "library": {
-      "name": "Alexandria Library",
-      "description": "Modern library and cultural center"
-    },
-    "valley_kings": {
-      "name": "Valley of the Kings",
-      "description": "Ancient Egyptian royal tombs"
-    },
-    "museum": {
-      "name": "Egyptian Museum",
-      "description": "Museum of ancient Egyptian antiquities"
-    },
-    "abu_simbel": {
-      "name": "Abu Simbel",
-      "description": "Two massive rock temples in southern Egypt"
-    },
-    "siwa": {
-      "name": "Siwa Oasis",
-      "description": "An urban oasis in Egypt's Western Desert"
-    },
-    "citadel": {
-      "name": "Citadel of Qaitbay",
-      "description": "15th-century defensive fortress"
-    }
-  },
-  "governorates": {
-    "giza": "Giza",
-    "cairo": "Cairo",
-    "luxor": "Luxor",
-    "aswan": "Aswan",
-    "alexandria": "Alexandria",
-    "matrouh": "Matrouh"
-  }
+
+  "title": "Egypt Governorates",
+  "cairo": "Cairo",
+  "alexandria": "Alexandria",
+  "luxor": "Luxor",
+  "pyramids": "Pyramids of Giza",
+  "pyramids_info": "Famous ancient pyramids.",
+  "cairo_tower": "Cairo Tower",
+  "cairo_tower_info": "A modern landmark in Cairo.",
+  "library_of_alexandria": "Library of Alexandria",
+  "library_of_alexandria_info": "Historic library of Alexandria.",
+  "citadel_of_qaitbay": "Citadel of Qaitbay",
+  "citadel_of_qaitbay_info": "A 15th-century fortress.",
+  "karnak_temple": "Karnak Temple",
+  "karnak_temple_info": "A vast ancient Egyptian temple complex.",
+  "valley_of_kings": "Valley of the Kings",
+  "valley_of_kings_info": "Burial site of pharaohs.",
+  "tap_to_view_landmarks": "Tap to view landmarks",
+  "language_switch": "Switch Language"
+
 }
