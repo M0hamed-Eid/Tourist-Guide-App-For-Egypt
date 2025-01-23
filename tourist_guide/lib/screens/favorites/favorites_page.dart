@@ -14,14 +14,7 @@ class FavoritesPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('app.navigation.favorites'.tr()),
       ),
-      body: Column(
-        children: const [
-          FavoritesHeader(),
-          Expanded(
-            child: FavoritesGrid(),
-          ),
-        ],
-      ),
+      body: FavoritesGrid(),
     );
   }
 }
