@@ -1,7 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tourist_guide/screens/favorites/widgets/favorites_grid.dart';
-import 'package:tourist_guide/screens/favorites/widgets/favorites_header.dart';
 import '../base_page.dart';
 
 class FavoritesPage extends StatelessWidget {
