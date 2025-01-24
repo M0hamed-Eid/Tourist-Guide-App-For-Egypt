@@ -1,8 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/routes/app_router.dart';
-import '../../../core/theme/app_colors.dart';
 
 @override
 PreferredSizeWidget buildAppBar(BuildContext context) {
@@ -10,7 +11,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
     leading: IconButton(
       icon: Icon(
         Icons.logout,
-        color: AppColors.surface,
+        color: Theme.of(context).iconTheme.color,
       ),
       onPressed: () {
         Navigator.pushReplacementNamed(context, AppRouter.login);
@@ -19,7 +20,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
     title: Text(
       'app.title'.tr(),
       style: TextStyle(
-        color: AppColors.surface,
+        color: Theme.of(context).appBarTheme.titleTextStyle?.color,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
@@ -28,8 +29,17 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
     actions: [
       IconButton(
         icon: Icon(
+          Icons.brightness_6,
+          color: Theme.of(context).iconTheme.color,
+        ),
+        onPressed: () {
+          context.read<ThemeBloc>().add(ToggleTheme());
+        },
+      ),
+      IconButton(
+        icon: Icon(
           Icons.language,
-          color: AppColors.surface,
+          color: Theme.of(context).iconTheme.color,
         ),
         onPressed: () async {
           if (context.locale == const Locale('en', 'US')) {
@@ -38,7 +48,6 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
             context.setLocale(const Locale('en', 'US'));
           }
 
-          // Force rebuild of all widgets that depend on direction
           if (context.mounted) {
             await Future.delayed(const Duration(milliseconds: 100));
             Navigator.pushReplacementNamed(

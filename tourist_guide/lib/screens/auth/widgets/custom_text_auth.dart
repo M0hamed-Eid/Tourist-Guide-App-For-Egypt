@@ -10,16 +10,14 @@ class CustomTextAuth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Text(text1,style: TextStyle(fontSize: 53,
-              color: AppColors.primary,fontWeight: FontWeight.bold),),
-          Text(text2,style: TextStyle(fontSize: 16,
-              color: AppColors.textSecondary),),
-          SizedBox(height: MediaQuery.of(context).size.height/17,),
-        ],
-      ),
+    return Column(
+      children: [
+        Text(text1,style: TextStyle(fontSize: 53,
+            color: AppColors.primary,fontWeight: FontWeight.bold),),
+        Text(text2,style: TextStyle(fontSize: 16,
+            color: AppColors.textSecondary),),
+        SizedBox(height: MediaQuery.of(context).size.height/17,),
+      ],
     );
   }
 }
