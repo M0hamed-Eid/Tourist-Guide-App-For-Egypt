@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class RouteTransitions {
   static PageRouteBuilder fadeTransition(Widget page) {
     return PageRouteBuilder(
-      transitionDuration: const Duration(milliseconds: 1000),
+      transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(

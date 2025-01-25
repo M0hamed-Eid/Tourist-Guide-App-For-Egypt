@@ -1,11 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../core/bloc/favorites/favorites_bloc.dart';
+import '../../../core/bloc/places/places_bloc.dart';
+import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/models/place.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/responsive_utils.dart';
-import '../../favorites/widgets/favorites_provider.dart';
 
 class PlaceCard extends StatefulWidget {
   final Place place;
@@ -24,47 +25,54 @@ class PlaceCard extends StatefulWidget {
 class PlaceCardState extends State<PlaceCard> {
   @override
   Widget build(BuildContext context) {
-    final favoritesProvider = Provider.of<FavoritesProvider>(context);
-    final isFavorite = favoritesProvider.isFavorite(widget.place.id);
+    final isDark = context.watch<ThemeBloc>().state.isDark;
+    return BlocBuilder<PlacesBloc, PlacesState>(
+      builder: (context, state) {
+        final isFavorite = state is PlacesLoaded &&
+            (state.favoritePlaces?.any((place) => place.id == widget.place.id) ?? false);
 
-    return SizedBox(
-      width: widget.width ?? ResponsiveUtils.getCardWidth(context),
-      child: Stack(
-        children: [
-          Card(
-            clipBehavior: Clip.hardEdge,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: _buildImage()),
-                _buildContent(),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: CircleAvatar(
-              backgroundColor: AppColors.surface.withValues(),
-              child: IconButton(
-                icon: Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? AppColors.error : AppColors.textSecondary,
+        return SizedBox(
+          width: widget.width ?? ResponsiveUtils.getCardWidth(context),
+          child: Stack(
+            children: [
+              Card(
+                clipBehavior: Clip.hardEdge,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _buildImage()),
+                    _buildContent(),
+                  ],
                 ),
-                onPressed: () {
-                  favoritesProvider.toggleFavorite(widget.place.id);
-                },
               ),
-            ),
+              Positioned(
+                top: 8,
+                right: 8,
+                child: CircleAvatar(
+                  backgroundColor: AppColors.surface(isDark),
+                  child: IconButton(
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite ? AppColors.error : AppColors.textSecondary(isDark),
+                    ),
+                    onPressed: () {
+                      context.read<PlacesBloc>().add(TogglePlaceFavorite(widget.place.id));
+                      context.read<FavoritesBloc>().add(LoadFavorites());
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildImage() {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Container(
-      color: AppColors.textLight,
+      color: AppColors.textLight(isDark),
       child: Image.asset(
         widget.place.imageUrl,
         fit: BoxFit.cover,
@@ -74,6 +82,7 @@ class PlaceCardState extends State<PlaceCard> {
   }
 
   Widget _buildContent() {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
@@ -82,7 +91,7 @@ class PlaceCardState extends State<PlaceCard> {
           Text(
             widget.place.nameKey.tr(),
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimary(isDark),
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtils.isMobile(context) ? 14 : 16,
             ),
@@ -91,7 +100,7 @@ class PlaceCardState extends State<PlaceCard> {
           Text(
             widget.place.governorateKey.tr(),
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondary(isDark),
               fontSize: ResponsiveUtils.isMobile(context) ? 12 : 14,
             ),
           ),
@@ -101,7 +110,7 @@ class PlaceCardState extends State<PlaceCard> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondary(isDark),
               fontSize: ResponsiveUtils.isMobile(context) ? 10 : 12,
             ),
           ),

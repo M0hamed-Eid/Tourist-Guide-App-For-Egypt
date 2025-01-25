@@ -1,34 +1,24 @@
-import 'dart:convert';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:crypto/crypto.dart'; // For hashing
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tourist_guide/screens/profile/widgets/profile_info.dart';
-
+import '../../core/bloc/profile/profile_bloc.dart';
+import '../../core/bloc/profile/profile_event.dart';
+import '../../core/bloc/profile/profile_state.dart';
 import '../base_page.dart';
 
-class ProfilePage extends StatelessWidget {
-  // Dummy data until auth is implemented
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
-  late final String fullName;
-  late final String email;
-  late final String password;
-  late final String phone;
-  late final String hashedPassword;
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
 
-  ProfilePage({super.key}) {
-    _init();
-  }
-
-  Future<void> _init() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    password = prefs.getString('password') ?? '';
-    email = prefs.getString('email') ?? 'Error in auth';
-    fullName = prefs.getString('fullName') ?? 'Error in auth';
-    phone = prefs.getString('phone') ?? 'Error in auth';
-
-    hashedPassword = sha256.convert(utf8.encode(password)).toString();
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProfileBloc>().add(LoadProfile());
   }
 
   @override
@@ -38,11 +28,38 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('app.navigation.profile'.tr()),
       ),
-      body: Column(
-        children: [
-          ProfileInfo(
-              fullName: fullName, email: email,phone: phone, hashedPassword: hashedPassword)
-        ],
+      body: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          if (state is ProfileLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is ProfileLoaded || state is ProfileUpdated) {
+            final profile = state is ProfileLoaded
+                ? state.profile
+                : (state as ProfileUpdated).profile;
+            return Column(
+              children: [
+                ProfileInfo(
+                  fullName: profile.name,
+                  email: profile.email,
+                  phone: profile.phone,
+                  hashedPassword: profile.hashedPassword,
+                ),
+              ],
+            );
+          } else if (state is ProfileError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  const SizedBox(height: 16),
+                  Text(state.message),
+                ],
+              ),
+            );
+          }
+          return const Center(child: CircularProgressIndicator());
+        },
       ),
     );
   }
