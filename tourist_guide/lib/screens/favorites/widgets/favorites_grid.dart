@@ -6,12 +6,14 @@ import 'package:tourist_guide/core/utils/responsive_utils.dart';
 import 'package:tourist_guide/screens/home/widgets/place_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/bloc/favorites/favorites_bloc.dart';
+import '../../../core/bloc/theme/theme_bloc.dart';
 
 class FavoritesGrid extends StatelessWidget {
   const FavoritesGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return BlocBuilder<FavoritesBloc, FavoritesState>(
       builder: (context, state) {
         if (state is FavoritesLoading) {
@@ -25,13 +27,13 @@ class FavoritesGrid extends StatelessWidget {
                   Icon(
                     Icons.favorite_border,
                     size: 64,
-                    color: AppColors.textSecondary,
+                    color: AppColors.textSecondary(isDark),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'No favorites yet'.tr(),
                     style: TextStyle(
-                      color: AppColors.textSecondary,
+                      color: AppColors.textSecondary(isDark),
                       fontSize: 16,
                     ),
                   ),

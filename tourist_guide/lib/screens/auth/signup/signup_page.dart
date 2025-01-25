@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import '../../../core/bloc/auth/auth_event.dart';
 import '../../../core/bloc/auth/auth_state.dart';
+import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../widgets/custom_button_auth.dart';
@@ -62,6 +63,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -188,10 +190,10 @@ class _SignUpPageState extends State<SignUpPage> {
                             children: [
                               const Text("Already have an account? "),
                               InkWell(
-                                child: const Text(
+                                child: Text(
                                   "Login",
                                   style: TextStyle(
-                                    color: AppColors.primary,
+                                    color: AppColors.primary(isDark),
                                   ),
                                 ),
                                 onTap: () {

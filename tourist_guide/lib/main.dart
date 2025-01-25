@@ -7,6 +7,7 @@ import 'core/bloc/places/places_bloc.dart';
 import 'core/bloc/profile/profile_bloc.dart';
 import 'core/bloc/theme/theme_bloc.dart';
 import 'core/routes/app_router.dart';
+import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 
 void main() async {
@@ -28,15 +29,14 @@ void main() async {
           ),
           BlocProvider(create: (_) => PlacesBloc()..add(LoadAllPlaces())),
           BlocProvider(
-            create: (_) => ThemeBloc(),
-          ),
-          BlocProvider(
             create: (_) => ProfileBloc(),
           ),
           BlocProvider(
             create: (_) => FavoritesBloc(),
           ),
-          BlocProvider(create: (_) => ThemeBloc()..add(LoadTheme())),
+          BlocProvider(
+            create: (_) => ThemeBloc()..add(LoadTheme()), // Initialize theme
+          ),
         ],
         child: const TouristGuideApp(),
       ),
@@ -51,14 +51,15 @@ class TouristGuideApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
+        final currentTheme = AppTheme.getTheme(themeState.isDark);
+
         return MaterialApp(
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           debugShowCheckedModeBanner: false,
           title: 'Egypt Tourist Guide',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
+          theme: currentTheme,
           themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
           onGenerateRoute: AppRouter.generateRoute,
           initialRoute: AppRouter.login,

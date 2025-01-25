@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tourist_guide/screens/auth/widgets/custom_text_auth.dart';
-
 import '../../../core/bloc/auth/auth_bloc.dart';
 import '../../../core/bloc/auth/auth_event.dart';
 import '../../../core/bloc/auth/auth_state.dart';
+import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../widgets/custom_button_auth.dart';
@@ -29,9 +28,16 @@ class _LoginPageState extends State<LoginPage> {
       isShowPassword = !isShowPassword;
     });
   }
+  @override
+  void dispose() {
+    emailController.dispose();
+    passController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -112,10 +118,10 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             const Text("Don't have an account? "),
                             InkWell(
-                              child: const Text(
+                              child: Text(
                                 "SignUp",
                                 style: TextStyle(
-                                  color: AppColors.primary,
+                                  color: AppColors.primary(isDark),
                                 ),
                               ),
                               onTap: () {

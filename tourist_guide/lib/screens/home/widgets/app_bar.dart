@@ -1,12 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tourist_guide/core/theme/app_colors.dart';
 
 import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/routes/app_router.dart';
 
 @override
 PreferredSizeWidget buildAppBar(BuildContext context) {
+  final isDark = context.watch<ThemeBloc>().state.isDark;
+
   return AppBar(
     leading: IconButton(
       icon: Icon(
@@ -20,7 +23,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
     title: Text(
       'app.title'.tr(),
       style: TextStyle(
-        color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+        color: AppColors.textPrimary(isDark),
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),

@@ -1,7 +1,9 @@
 // lib/core/widgets/custom_bottom_nav_bar.dart
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../core/bloc/theme/theme_bloc.dart';
 import '../core/routes/app_router.dart';
 import '../core/theme/app_colors.dart';
 
@@ -15,41 +17,44 @@ class CustomBottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
-  static final List<({IconData icon, IconData activeIcon, String route, String labelKey})> _navItems = [
+  static final List<
+          ({IconData icon, IconData activeIcon, String route, String labelKey})>
+      _navItems = [
     (
-    icon: Icons.home_outlined,
-    activeIcon: Icons.home,
-    route: AppRouter.home,
-    labelKey: 'app.navigation.home',
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home,
+      route: AppRouter.home,
+      labelKey: 'app.navigation.home',
     ),
     (
-    icon: Icons.map_outlined,
-    activeIcon: Icons.map,
-    route: AppRouter.governments,
-    labelKey: 'app.navigation.governments',
+      icon: Icons.map_outlined,
+      activeIcon: Icons.map,
+      route: AppRouter.governments,
+      labelKey: 'app.navigation.governments',
     ),
     (
-    icon: Icons.favorite_border,
-    activeIcon: Icons.favorite,
-    route: AppRouter.favorites,
-    labelKey: 'app.navigation.favorites',
+      icon: Icons.favorite_border,
+      activeIcon: Icons.favorite,
+      route: AppRouter.favorites,
+      labelKey: 'app.navigation.favorites',
     ),
     (
-    icon: Icons.person_outline,
-    activeIcon: Icons.person,
-    route: AppRouter.profile,
-    labelKey: 'app.navigation.profile',
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+      route: AppRouter.profile,
+      labelKey: 'app.navigation.profile',
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AppColors.surface(isDark),
         boxShadow: [
           BoxShadow(
-            color: AppColors.cardShadow,
+            color: AppColors.cardShadow(isDark),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -64,9 +69,9 @@ class CustomBottomNavBar extends StatelessWidget {
           }
         },
         type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.surface,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textSecondary,
+        backgroundColor: AppColors.surface(isDark),
+        selectedItemColor: AppColors.primary(isDark),
+        unselectedItemColor: AppColors.textSecondary(isDark),
         selectedLabelStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,

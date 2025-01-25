@@ -3,85 +3,39 @@ import 'app_colors.dart';
 import 'text_themes.dart';
 
 class AppTheme {
-  static ThemeData get lightTheme {
+  static ThemeData getTheme(bool isDark) {
     return ThemeData(
-      brightness: Brightness.light,
-      primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: AppColors.background,
-      textTheme: AppTextTheme.textTheme,
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.primary,
-        elevation: 0,
-        iconTheme: IconThemeData(
-          color: AppColors.surface,
-        ),
-        titleTextStyle: TextStyle(
-          color: AppColors.surface,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      cardTheme: CardTheme(
-        color: AppColors.cardBackground,
-        elevation: 4,
-        shadowColor: AppColors.cardShadow,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AppColors.surface,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textSecondary,
-        selectedLabelStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-        ),
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
-        elevation: 8,
-      ),
-    );
-  }
-
-  static ThemeData get darkTheme {
-    return ThemeData(
-      brightness: Brightness.dark,
-      primaryColor: AppColors.primaryDark,
-      scaffoldBackgroundColor: Colors.grey[900],
+      brightness: isDark ? Brightness.dark : Brightness.light,
+      primaryColor: AppColors.primary(isDark),
+      scaffoldBackgroundColor: AppColors.background(isDark),
       textTheme: AppTextTheme.textTheme.apply(
-        bodyColor: Colors.white,
-        displayColor: Colors.white,
+        bodyColor: AppColors.textPrimary(isDark),
+        displayColor: AppColors.textPrimary(isDark),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: Colors.grey[900],
+        backgroundColor: AppColors.primary(isDark),
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Colors.white,
+        iconTheme: IconThemeData(
+          color: AppColors.surface(isDark),
         ),
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
+        titleTextStyle: TextStyle(
+          color: AppColors.surface(isDark),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
       cardTheme: CardTheme(
-        color: Colors.grey[800],
+        color: AppColors.cardBackground(isDark),
         elevation: 4,
-        shadowColor: AppColors.cardShadow,
+        shadowColor: AppColors.cardShadow(isDark),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: Colors.grey[900],
-        selectedItemColor: AppColors.primaryLight,
-        unselectedItemColor: Colors.grey[400],
+        backgroundColor: AppColors.surface(isDark),
+        selectedItemColor: isDark ? AppColors.primaryLight(isDark) : AppColors.primary(isDark),
+        unselectedItemColor: AppColors.textSecondary(isDark),
         selectedLabelStyle: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,

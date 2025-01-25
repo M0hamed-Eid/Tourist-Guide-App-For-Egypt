@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/bloc/favorites/favorites_bloc.dart';
 import '../../../core/bloc/places/places_bloc.dart';
+import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/models/place.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/responsive_utils.dart';
@@ -24,6 +25,7 @@ class PlaceCard extends StatefulWidget {
 class PlaceCardState extends State<PlaceCard> {
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return BlocBuilder<PlacesBloc, PlacesState>(
       builder: (context, state) {
         final isFavorite = state is PlacesLoaded &&
@@ -47,11 +49,11 @@ class PlaceCardState extends State<PlaceCard> {
                 top: 8,
                 right: 8,
                 child: CircleAvatar(
-                  backgroundColor: AppColors.surface,
+                  backgroundColor: AppColors.surface(isDark),
                   child: IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? AppColors.error : AppColors.textSecondary,
+                      color: isFavorite ? AppColors.error : AppColors.textSecondary(isDark),
                     ),
                     onPressed: () {
                       context.read<PlacesBloc>().add(TogglePlaceFavorite(widget.place.id));
@@ -68,8 +70,9 @@ class PlaceCardState extends State<PlaceCard> {
   }
 
   Widget _buildImage() {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Container(
-      color: AppColors.textLight,
+      color: AppColors.textLight(isDark),
       child: Image.asset(
         widget.place.imageUrl,
         fit: BoxFit.cover,
@@ -79,6 +82,7 @@ class PlaceCardState extends State<PlaceCard> {
   }
 
   Widget _buildContent() {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
@@ -87,7 +91,7 @@ class PlaceCardState extends State<PlaceCard> {
           Text(
             widget.place.nameKey.tr(),
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: AppColors.textPrimary(isDark),
               fontWeight: FontWeight.bold,
               fontSize: ResponsiveUtils.isMobile(context) ? 14 : 16,
             ),
@@ -96,7 +100,7 @@ class PlaceCardState extends State<PlaceCard> {
           Text(
             widget.place.governorateKey.tr(),
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondary(isDark),
               fontSize: ResponsiveUtils.isMobile(context) ? 12 : 14,
             ),
           ),
@@ -106,7 +110,7 @@ class PlaceCardState extends State<PlaceCard> {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: AppColors.textSecondary,
+              color: AppColors.textSecondary(isDark),
               fontSize: ResponsiveUtils.isMobile(context) ? 10 : 12,
             ),
           ),
