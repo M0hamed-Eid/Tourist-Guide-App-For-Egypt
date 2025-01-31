@@ -1,32 +1,41 @@
+// lib/core/bloc/profile/profile_bloc.dart
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/user_profile.dart';
+import '../../services/firebase_auth_service.dart';
+import '../../services/firestore_service.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(ProfileInitial()) {
+  final FirebaseAuthService authService;
+  final FirestoreService firestoreService;
+
+  ProfileBloc({
+    required this.authService,
+    required this.firestoreService,
+  }) : super(ProfileInitial()) {
     on<LoadProfile>(_handleLoadProfile);
     on<UpdateProfile>(_handleUpdateProfile);
     on<UpdateAvatar>(_handleUpdateAvatar);
   }
 
-  Future<void> _handleLoadProfile(LoadProfile event, Emitter<ProfileState> emit) async {
+  Future<void> _handleLoadProfile(
+      LoadProfile event,
+      Emitter<ProfileState> emit,
+      ) async {
     emit(ProfileLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final password = prefs.getString('password') ?? '';
+      final user = authService.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
 
-      final profile = UserProfile(
-        id: prefs.getString('userId') ?? '',
-        name: prefs.getString('fullName') ?? '',
-        email: prefs.getString('email') ?? '',
-        phone: prefs.getString('phone') ?? '',
-        avatarUrl: prefs.getString('avatarUrl'),
-        hashedPassword: sha256.convert(utf8.encode(password)).toString(),
-      );
+      final profile = await firestoreService.getUserProfile(user.uid);
+      if (profile == null) {
+        throw Exception('Profile not found');
+      }
 
       emit(ProfileLoaded(profile));
     } catch (e) {
@@ -34,49 +43,61 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  Future<void> _handleUpdateProfile(UpdateProfile event, Emitter<ProfileState> emit) async {
+  Future<void> _handleUpdateProfile(
+      UpdateProfile event,
+      Emitter<ProfileState> emit,
+      ) async {
     emit(ProfileLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('fullName', event.profile.name);
-      await prefs.setString('email', event.profile.email);
-      await prefs.setString('phone', event.profile.phone);
-          if (event.profile.avatarUrl != null) {
-        await prefs.setString('avatarUrl', event.profile.avatarUrl!);
+      final user = authService.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
       }
 
+      await firestoreService.updateUserProfile(
+        user.uid,
+        event.profile.toJson(),
+      );
+
       emit(ProfileUpdated(event.profile));
+      // Reload profile to get latest data
+      add(LoadProfile());
     } catch (e) {
       emit(ProfileError(e.toString()));
     }
   }
 
-  Future<void> _handleUpdateAvatar(UpdateAvatar event, Emitter<ProfileState> emit) async {
+  Future<void> _handleUpdateAvatar(
+      UpdateAvatar event,
+      Emitter<ProfileState> emit,
+      ) async {
     emit(ProfileLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('avatarUrl', event.avatarPath);
+      final user = authService.currentUser;
+      if (user == null) {
+        throw Exception('User not authenticated');
+      }
 
-      final currentProfile = await _getCurrentProfile();
-      final updatedProfile = currentProfile.copyWith(avatarUrl: event.avatarPath);
+      final currentProfile = await firestoreService.getUserProfile(user.uid);
+      if (currentProfile == null) {
+        throw Exception('Profile not found');
+      }
+
+      final updatedProfile = currentProfile.copyWith(
+        avatarUrl: event.avatarPath,
+        updatedAt: DateTime.now(),
+      );
+
+      await firestoreService.updateUserProfile(
+        user.uid,
+        {'avatarUrl': event.avatarPath},
+      );
 
       emit(ProfileUpdated(updatedProfile));
+      // Reload profile to get latest data
+      add(LoadProfile());
     } catch (e) {
       emit(ProfileError(e.toString()));
     }
-  }
-
-  Future<UserProfile> _getCurrentProfile() async {
-    final prefs = await SharedPreferences.getInstance();
-    final password = prefs.getString('password') ?? '';
-
-    return UserProfile(
-      id: prefs.getString('userId') ?? '',
-      name: prefs.getString('fullName') ?? '',
-      email: prefs.getString('email') ?? '',
-      phone: prefs.getString('phone') ?? '',
-      avatarUrl: prefs.getString('avatarUrl'),
-      hashedPassword: sha256.convert(utf8.encode(password)).toString(),
-    );
   }
 }

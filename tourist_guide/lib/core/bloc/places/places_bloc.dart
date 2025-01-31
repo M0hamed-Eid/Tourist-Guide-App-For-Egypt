@@ -1,14 +1,22 @@
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../constants/app_constants.dart';
 import '../../models/place.dart';
+import '../../services/firebase_auth_service.dart';
+import '../../services/firestore_service.dart';
 
 part 'places_event.dart';
-
 part 'places_state.dart';
 
 class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
-  PlacesBloc() : super(PlacesInitial()) {
+  final FirestoreService _firestoreService;
+  final FirebaseAuthService _authService;
+
+  PlacesBloc({
+    required FirestoreService firestoreService,
+    required FirebaseAuthService authService,
+  })  : _firestoreService = firestoreService,
+        _authService = authService,
+        super(PlacesInitial()) {
     on<LoadAllPlaces>(_handleLoadAllPlaces);
     on<LoadSuggestedPlaces>(_handleLoadSuggestedPlaces);
     on<LoadPopularPlaces>(_handleLoadPopularPlaces);
@@ -16,26 +24,44 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
   }
 
   Future<void> _handleLoadAllPlaces(
-    LoadAllPlaces event,
-    Emitter<PlacesState> emit,
-  ) async {
+      LoadAllPlaces event,
+      Emitter<PlacesState> emit,
+      ) async {
     emit(PlacesLoading(isSuggestedLoading: true, isPopularLoading: true));
 
     try {
-      await Future.delayed(const Duration(seconds: 1));
-      final suggestedPlaces = AppConstants.suggestedPlaces;
-      final popularPlaces = AppConstants.popularPlaces;
+      final results = await Future.wait([
+        _firestoreService.getPlacesByCategory('suggested'),
+        _firestoreService.getPlacesByCategory('popular'),
+      ]);
 
-      final prefs = await SharedPreferences.getInstance();
-      final favorites = prefs.getStringList('favorite_places') ?? [];
-      final favoritePlaces = AppConstants.allPlaces
-          .where((place) => favorites.contains(place.id))
-          .toList();
+      final suggestedPlaces = results[0];
+      final popularPlaces = results[1];
+
+      // Get favorites if user is authenticated
+      if (_authService.currentUser != null) {
+        final favoriteIds = await _firestoreService.getFavorites(
+          _authService.currentUser!.uid,
+        );
+
+        // Update isFavorite flag
+        suggestedPlaces.forEach((place) {
+          if (favoriteIds.contains(place.id)) {
+            place = place.copyWith(isFavorite: true);
+          }
+        });
+
+        popularPlaces.forEach((place) {
+          if (favoriteIds.contains(place.id)) {
+            place = place.copyWith(isFavorite: true);
+          }
+        });
+      }
 
       emit(PlacesLoaded(
-          suggestedPlaces: suggestedPlaces,
-          popularPlaces: popularPlaces,
-          favoritePlaces: favoritePlaces));
+        suggestedPlaces: suggestedPlaces,
+        popularPlaces: popularPlaces,
+      ));
     } catch (e) {
       emit(PlacesError(
         e.toString(),
@@ -46,85 +72,68 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
   }
 
   Future<void> _handleLoadSuggestedPlaces(
-    LoadSuggestedPlaces event,
-    Emitter<PlacesState> emit,
-  ) async {
-    final currentState = state;
-    emit(PlacesLoading(isSuggestedLoading: true));
+      LoadSuggestedPlaces event,
+      Emitter<PlacesState> emit,
+      ) async {
+    if (state is PlacesLoaded) {
+      final currentState = state as PlacesLoaded;
+      emit(PlacesLoading(isSuggestedLoading: true));
 
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      final suggestedPlaces = AppConstants.suggestedPlaces;
-
-      if (currentState is PlacesLoaded) {
+      try {
+        final suggestedPlaces = await _firestoreService.getPlacesByCategory('suggested');
         emit(currentState.copyWith(suggestedPlaces: suggestedPlaces));
-      } else {
-        emit(PlacesLoaded(suggestedPlaces: suggestedPlaces));
+      } catch (e) {
+        emit(PlacesError(e.toString(), isSuggestedError: true));
       }
-    } catch (e) {
-      emit(PlacesError(e.toString(), isSuggestedError: true));
     }
   }
 
   Future<void> _handleLoadPopularPlaces(
-    LoadPopularPlaces event,
-    Emitter<PlacesState> emit,
-  ) async {
-    final currentState = state;
-    emit(PlacesLoading(isPopularLoading: true));
+      LoadPopularPlaces event,
+      Emitter<PlacesState> emit,
+      ) async {
+    if (state is PlacesLoaded) {
+      final currentState = state as PlacesLoaded;
+      emit(PlacesLoading(isPopularLoading: true));
 
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      final popularPlaces = AppConstants.popularPlaces;
-
-      if (currentState is PlacesLoaded) {
+      try {
+        final popularPlaces = await _firestoreService.getPlacesByCategory('popular');
         emit(currentState.copyWith(popularPlaces: popularPlaces));
-      } else {
-        emit(PlacesLoaded(popularPlaces: popularPlaces));
+      } catch (e) {
+        emit(PlacesError(e.toString(), isPopularError: true));
       }
-    } catch (e) {
-      emit(PlacesError(e.toString(), isPopularError: true));
     }
   }
 
   Future<void> _handleToggleFavorite(
-    TogglePlaceFavorite event,
-    Emitter<PlacesState> emit,
-  ) async {
+      TogglePlaceFavorite event,
+      Emitter<PlacesState> emit,
+      ) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final favorites = prefs.getStringList('favorite_places') ?? [];
-
-      if (favorites.contains(event.placeId)) {
-        favorites.remove(event.placeId);
-      } else {
-        favorites.add(event.placeId);
+      final user = _authService.currentUser;
+      if (user == null) {
+        throw Exception('User must be authenticated to manage favorites');
       }
 
-      await prefs.setStringList('favorite_places', favorites);
+      await _firestoreService.toggleFavorite(user.uid, event.placeId);
 
       if (state is PlacesLoaded) {
         final currentState = state as PlacesLoaded;
+        final favoriteIds = await _firestoreService.getFavorites(user.uid);
 
-        final updatedSuggestedPlaces =
-            currentState.suggestedPlaces?.map((place) {
-          if (place.id == event.placeId) {
-            return place.copyWith(isFavorite: favorites.contains(place.id));
-          }
-          return place;
-        }).toList();
-
-        final updatedPopularPlaces = currentState.popularPlaces?.map((place) {
-          if (place.id == event.placeId) {
-            return place.copyWith(isFavorite: favorites.contains(place.id));
-          }
-          return place;
-        }).toList();
-
-        final updatedFavoritePlaces = AppConstants.allPlaces
-            .where((place) => favorites.contains(place.id))
-            .map((place) => place.copyWith(isFavorite: true))
+        final updatedSuggestedPlaces = currentState.suggestedPlaces
+            .map((place) => place.copyWith(
+          isFavorite: favoriteIds.contains(place.id),
+        ))
             .toList();
+
+        final updatedPopularPlaces = currentState.popularPlaces
+            .map((place) => place.copyWith(
+          isFavorite: favoriteIds.contains(place.id),
+        ))
+            .toList();
+
+        final updatedFavoritePlaces = await _firestoreService.getPlacesByIds(favoriteIds);
 
         emit(currentState.copyWith(
           suggestedPlaces: updatedSuggestedPlaces,

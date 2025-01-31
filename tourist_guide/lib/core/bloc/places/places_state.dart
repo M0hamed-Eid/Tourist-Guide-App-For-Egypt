@@ -15,14 +15,14 @@ class PlacesLoading extends PlacesState {
 }
 
 class PlacesLoaded extends PlacesState {
-  final List<Place>? suggestedPlaces;
-  final List<Place>? popularPlaces;
-  final List<Place>? favoritePlaces;
+  final List<Place> suggestedPlaces;
+  final List<Place> popularPlaces;
+  final List<Place> favoritePlaces;
 
   PlacesLoaded({
-    this.suggestedPlaces,
-    this.popularPlaces,
-    this.favoritePlaces,
+    this.suggestedPlaces = const [],
+    this.popularPlaces = const [],
+    this.favoritePlaces = const [],
   });
 
   PlacesLoaded copyWith({

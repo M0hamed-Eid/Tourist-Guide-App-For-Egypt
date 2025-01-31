@@ -11,10 +11,11 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
   final isDark = context.watch<ThemeBloc>().state.isDark;
 
   return AppBar(
+    backgroundColor: AppColors.primaryDark(isDark),
     leading: IconButton(
       icon: Icon(
         Icons.logout,
-        color: Theme.of(context).iconTheme.color,
+        color: AppColors.white,
       ),
       onPressed: () {
         Navigator.pushReplacementNamed(context, AppRouter.login);
@@ -23,7 +24,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
     title: Text(
       'app.title'.tr(),
       style: TextStyle(
-        color: AppColors.textPrimary(isDark),
+        color: AppColors.white,
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
@@ -33,7 +34,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
       IconButton(
         icon: Icon(
           Icons.brightness_6,
-          color: Theme.of(context).iconTheme.color,
+          color: AppColors.white,
         ),
         onPressed: () {
           context.read<ThemeBloc>().add(ToggleTheme());
@@ -42,7 +43,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
       IconButton(
         icon: Icon(
           Icons.language,
-          color: Theme.of(context).iconTheme.color,
+          color: AppColors.white,
         ),
         onPressed: () async {
           if (context.locale == const Locale('en', 'US')) {

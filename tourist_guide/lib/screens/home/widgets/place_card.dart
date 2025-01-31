@@ -26,10 +26,11 @@ class PlaceCardState extends State<PlaceCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeBloc>().state.isDark;
-    return BlocBuilder<PlacesBloc, PlacesState>(
-      builder: (context, state) {
-        final isFavorite = state is PlacesLoaded &&
-            (state.favoritePlaces?.any((place) => place.id == widget.place.id) ?? false);
+
+    return BlocBuilder<FavoritesBloc, FavoritesState>(
+      builder: (context, favoritesState) {
+        final isFavorite = favoritesState is FavoritesLoaded &&
+            favoritesState.places.any((place) => place.id == widget.place.id);
 
         return SizedBox(
           width: widget.width ?? ResponsiveUtils.getCardWidth(context),
@@ -56,8 +57,7 @@ class PlaceCardState extends State<PlaceCard> {
                       color: isFavorite ? AppColors.error : AppColors.textSecondary(isDark),
                     ),
                     onPressed: () {
-                      context.read<PlacesBloc>().add(TogglePlaceFavorite(widget.place.id));
-                      context.read<FavoritesBloc>().add(LoadFavorites());
+                      context.read<FavoritesBloc>().add(ToggleFavorite(widget.place.id));
                     },
                   ),
                 ),
