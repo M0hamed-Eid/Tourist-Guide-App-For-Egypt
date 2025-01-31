@@ -28,26 +28,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Uncomment this line to upload initial data (run only once)
-  // await FirebaseDataUploader.uploadInitialData();
+   await FirebaseDataUploader.uploadInitialData();
 
   // Initialize services
   final authService = FirebaseAuthService();
   final firestoreService = FirestoreService();
-
-  // Upload initial data only if needed
-  final prefs = await SharedPreferences.getInstance();
-  final hasUploadedData = prefs.getBool('has_uploaded_initial_data') ?? false;
-
-  if (!hasUploadedData) {
-    try {
-      await FirebaseDataUploader.uploadInitialData();
-      await prefs.setBool('has_uploaded_initial_data', true);
-    } catch (e) {
-      debugPrint('Error uploading initial data: $e');
-    }
-  }
-
 
   runApp(
     EasyLocalization(
