@@ -28,45 +28,45 @@ class PlaceCardState extends State<PlaceCard> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return BlocBuilder<FavoritesBloc, FavoritesState>(
-      builder: (context, favoritesState) {
-        final isFavorite = favoritesState is FavoritesLoaded &&
-            favoritesState.places.any((place) => place.id == widget.place.id);
+        builder: (context, favoritesState) {
+          final isFavorite = favoritesState is FavoritesLoaded &&
+              favoritesState.places.any((place) => place.id == widget.place.id);
 
-        return SizedBox(
-          width: widget.width ?? ResponsiveUtils.getCardWidth(context),
-          child: Stack(
-            children: [
-              Card(
-                clipBehavior: Clip.hardEdge,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _buildImage()),
-                    _buildContent(),
-                  ],
-                ),
-              ),
-              Positioned(
-                top: 8,
-                right: 8,
-                child: CircleAvatar(
-                  backgroundColor: AppColors.surface(isDark),
-                  child: IconButton(
-                    icon: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? AppColors.error : AppColors.textSecondary(isDark),
-                    ),
-                    onPressed: () {
-                      context.read<FavoritesBloc>().add(ToggleFavorite(widget.place.id));
-                    },
+          return SizedBox(
+            width: widget.width ?? ResponsiveUtils.getCardWidth(context),
+            child: Stack(
+              children: [
+                Card(
+                  clipBehavior: Clip.hardEdge,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: _buildImage()),
+                      _buildContent(),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: CircleAvatar(
+                    backgroundColor: AppColors.surface(isDark),
+                    child: IconButton(
+                      icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: isFavorite ? AppColors.error : AppColors.textSecondary(isDark),
+                      ),
+                      onPressed: () {
+                        context.read<FavoritesBloc>().add(ToggleFavorite(widget.place.id));
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
   }
 
   Widget _buildImage() {

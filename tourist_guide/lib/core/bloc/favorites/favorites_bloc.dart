@@ -33,12 +33,13 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
             .toList();
         emit(FavoritesLoaded(places: favoritePlaces));
       } else {
-        emit(FavoritesError('User not authenticated'));
+        emit( FavoritesError('User not authenticated'));
       }
     } catch (e) {
       emit(FavoritesError(e.toString()));
     }
   }
+
 
   Future<void> _handleToggleFavorite(
       ToggleFavorite event,
@@ -47,11 +48,10 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
     try {
       final user = authService.currentUser;
       if (user == null) {
-        emit(FavoritesError('User not authenticated'));
+        emit( FavoritesError('User not authenticated'));
         return;
       }
 
-      // Get current state
       final currentState = state;
       if (currentState is FavoritesLoaded) {
         // Optimistically update UI
@@ -65,13 +65,8 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
         // Update in Firestore
         await firestoreService.toggleFavorite(user.uid, event.placeId);
       }
-
-      // Reload favorites to ensure consistency
-      add(LoadFavorites());
     } catch (e) {
       emit(FavoritesError(e.toString()));
-      // Reload favorites to ensure UI is in sync
-      add(LoadFavorites());
     }
   }
 }
