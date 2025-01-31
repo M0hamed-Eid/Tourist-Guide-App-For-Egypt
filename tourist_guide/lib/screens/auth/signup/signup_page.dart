@@ -42,19 +42,38 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   void showSuccessDialog() {
+    final isDark = context.read<ThemeBloc>().state.isDark;
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: const Text("Success"),
-        content: const Text("Account created successfully"),
+        backgroundColor: AppColors.surface(isDark),
+        title: Text(
+          "Success",
+          style: TextStyle(
+            color: AppColors.textPrimary(isDark),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          "Account created successfully",
+          style: TextStyle(
+            color: AppColors.textSecondary(isDark),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, AppRouter.login);
+              //Navigator.pushReplacementNamed(context, AppRouter.login);
             },
-            child: const Text("Close"),
+            child: Text(
+              "Close",
+              style: TextStyle(
+                color: AppColors.primary(isDark),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ],
       ),
@@ -78,19 +97,23 @@ class _SignUpPageState extends State<SignUpPage> {
             showSuccessDialog();
           }
         },
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-            child: Form(
-              key: formKey,
-              child: SafeArea(
-                child: SingleChildScrollView(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Form(
+                  key: formKey,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      const SizedBox(height: 32),
                       const CustomTextAuth(
                         text1: "Sign up",
                         text2: "Create your account",
                       ),
+                      const SizedBox(height: 48),
                       CustomTextFormFieldAuth(
                         hintText: "Enter your Full Name",
                         labalText: "Full Name",
@@ -107,6 +130,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 24),
                       CustomTextFormFieldAuth(
                         hintText: "Enter your email",
                         labalText: "Email",
@@ -123,12 +147,15 @@ class _SignUpPageState extends State<SignUpPage> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 24),
                       CustomTextFormFieldAuth(
                         hintText: "Enter your Password",
                         obscuretext: isShowPassword,
                         onTapIcon: showPassword,
                         labalText: "Password",
-                        iconData: isShowPassword ? Icons.lock_outline : Icons.lock_open,
+                        iconData: isShowPassword
+                            ? Icons.lock_outline
+                            : Icons.lock_open,
                         mycontroller: passController,
                         isNunmber: false,
                         valid: (val) {
@@ -141,72 +168,109 @@ class _SignUpPageState extends State<SignUpPage> {
                           return null;
                         },
                       ),
-                      IntlPhoneField(
-                        decoration: InputDecoration(
-                          floatingLabelBehavior: FloatingLabelBehavior.always,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 5,
-                            horizontal: 25,
-                          ),
-                          labelText: 'Phone Number',
-                          suffixIcon: const Icon(Icons.phone),
-                          hintText: "Enter your phone number",
-                          hintStyle: const TextStyle(fontSize: 14),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25),
+                      const SizedBox(height: 24),
+                      Theme(
+                        data: Theme.of(context).copyWith(
+                          inputDecorationTheme: InputDecorationTheme(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              borderSide: BorderSide(
+                                color: AppColors.textSecondary(isDark),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(25),
+                              borderSide: BorderSide(
+                                color: AppColors.primary(isDark),
+                              ),
+                            ),
                           ),
                         ),
-                        initialCountryCode: 'EG',
-                        onChanged: (phone) {
-                          phoneController.text = phone.completeNumber;
-                        },
+                        child: IntlPhoneField(
+                          decoration: InputDecoration(
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 5,
+                              horizontal: 25,
+                            ),
+                            labelText: 'Phone Number',
+                            suffixIcon: Icon(
+                              Icons.phone,
+                              color: AppColors.textSecondary(isDark),
+                            ),
+                            hintText: "Enter your phone number",
+                            hintStyle: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textSecondary(isDark),
+                            ),
+                          ),
+                          initialCountryCode: 'EG',
+                          onChanged: (phone) {
+                            phoneController.text = phone.completeNumber;
+                          },
+                          dropdownTextStyle: TextStyle(
+                            color: AppColors.textPrimary(isDark),
+                          ),
+                          style: TextStyle(
+                            color: AppColors.textPrimary(isDark),
+                          ),
+                        ),
                       ),
+                      const SizedBox(height: 32),
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, state) {
                           return CustomButtonAuth(
-                            text: state is AuthLoading ? "Creating Account..." : "Sign Up",
+                            text: state is AuthLoading
+                                ? "Creating Account..."
+                                : "Sign Up",
                             onpressed: state is AuthLoading
                                 ? null
                                 : () {
-                              if (formKey.currentState!.validate()) {
-                                context.read<AuthBloc>().add(
-                                  SignUpRequested(
-                                    name: nameController.text,
-                                    email: emailController.text,
-                                    password: passController.text,
-                                    phone: phoneController.text,
-                                  ),
-                                );
-                              }
-                            },
+                                    if (formKey.currentState!.validate()) {
+                                      context.read<AuthBloc>().add(
+                                            SignUpRequested(
+                                              name: nameController.text,
+                                              email: emailController.text,
+                                              password: passController.text,
+                                              phone: phoneController.text,
+                                            ),
+                                          );
+                                    }
+                                  },
                           );
                         },
                       ),
-                      Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text("Already have an account? "),
-                              InkWell(
-                                child: Text(
-                                  "Login",
-                                  style: TextStyle(
-                                    color: AppColors.primary(isDark),
-                                  ),
-                                ),
-                                onTap: () {
-                                  Navigator.pushReplacementNamed(
-                                    context,
-                                    AppRouter.login,
-                                  );
-                                },
-                              ),
-                            ],
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Already have an account? ",
+                            style: TextStyle(
+                              color: AppColors.textSecondary(isDark),
+                            ),
                           ),
-                        ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                AppRouter.login,
+                              );
+                            },
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                color: AppColors.primary(isDark),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),

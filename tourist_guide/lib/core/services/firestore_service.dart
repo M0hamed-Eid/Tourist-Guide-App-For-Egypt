@@ -14,8 +14,6 @@ class FirestoreService {
   CollectionReference<Map<String, dynamic>> get _usersCollection =>
       _firestore.collection('users');
 
-
-
   // Get user profile
   Future<UserProfile?> getUserProfile(String userId) async {
     try {

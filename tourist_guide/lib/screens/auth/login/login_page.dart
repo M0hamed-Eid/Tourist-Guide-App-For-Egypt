@@ -44,9 +44,7 @@ class _LoginPageState extends State<LoginPage> {
           if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  state.message,
-                ),
+                content: Text(state.message),
                 backgroundColor: AppColors.error,
               ),
             );
@@ -54,85 +52,101 @@ class _LoginPageState extends State<LoginPage> {
             Navigator.pushReplacementNamed(context, AppRouter.home);
           }
         },
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-            child: Form(
-              key: formKey,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    CustomTextAuth(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: 32),
+                      CustomTextAuth(
                         text1: "Welcome",
-                        text2: "Enter your credential to login"),
-                    CustomTextFormFieldAuth(
-                      hintText: "Enter your email",
-                      labalText: "Email",
-                      iconData: Icons.email_outlined,
-                      mycontroller: emailController,
-                      isNunmber: false,
-                      valid: (val) {
-                        if (val == null || val.isEmpty) {
-                          return "Email is required ";
-                        }
-                        if (!val.contains("@")) {
-                          return "Email must contain '@'";
-                        }
-                        return null;
-                      },
-                    ),
-                    CustomTextFormFieldAuth(
-                      hintText: "Enter your Password",
-                      obscuretext: isShowPassword,
-                      onTapIcon: showPassword,
-                      labalText: "Password",
-                      iconData:
-                          isShowPassword ? Icons.lock_outline : Icons.lock_open,
-                      mycontroller: passController,
-                      isNunmber: false,
-                      valid: (val) {
-                        if (val == null || val.isEmpty) {
-                          return "Password is required ";
-                        }
-                        if (val.length < 6) {
-                          return "Password must be at least 6 characters";
-                        }
-                        return null;
-                      },
-                    ),
-                    CustomButtonAuth(
-                      text: "Login",
-                      onpressed: () {
-                        if (formKey.currentState!.validate()) {
-                          context.read<AuthBloc>().add(LoginRequested(
-                              email: emailController.text,
-                              password: passController.text));
-                        }
-                      },
-                    ),
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text("Don't have an account? "),
-                            InkWell(
-                              child: Text(
-                                "SignUp",
-                                style: TextStyle(
-                                  color: AppColors.primary(isDark),
-                                ),
-                              ),
-                              onTap: () {
-                                Navigator.pushNamed(context, AppRouter.signup);
-                              },
-                            ),
-                          ],
-                        ),
+                        text2: "Enter your credentials to login",
                       ),
-                    )
-                  ],
+                      const SizedBox(height: 48),
+                      CustomTextFormFieldAuth(
+                        hintText: "Enter your email",
+                        labalText: "Email",
+                        iconData: Icons.email_outlined,
+                        mycontroller: emailController,
+                        isNunmber: false,
+                        valid: (val) {
+                          if (val == null || val.isEmpty) {
+                            return "Email is required ";
+                          }
+                          if (!val.contains("@")) {
+                            return "Email must contain '@'";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      CustomTextFormFieldAuth(
+                        hintText: "Enter your Password",
+                        obscuretext: isShowPassword,
+                        onTapIcon: showPassword,
+                        labalText: "Password",
+                        iconData: isShowPassword
+                            ? Icons.lock_outline
+                            : Icons.lock_open,
+                        mycontroller: passController,
+                        isNunmber: false,
+                        valid: (val) {
+                          if (val == null || val.isEmpty) {
+                            return "Password is required ";
+                          }
+                          if (val.length < 6) {
+                            return "Password must be at least 6 characters";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 32),
+                      CustomButtonAuth(
+                        text: "Login",
+                        onpressed: () {
+                          if (formKey.currentState!.validate()) {
+                            context.read<AuthBloc>().add(
+                              LoginRequested(
+                                email: emailController.text,
+                                password: passController.text,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account? ",
+                            style: TextStyle(
+                              color: AppColors.textSecondary(isDark),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, AppRouter.signup);
+                            },
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                color: AppColors.primary(isDark),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 32),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -17,23 +17,25 @@ class PlacesLoading extends PlacesState {
 class PlacesLoaded extends PlacesState {
   final List<Place> suggestedPlaces;
   final List<Place> popularPlaces;
-  final List<Place> favoritePlaces;
+  final List<String> favoriteIds;
 
   PlacesLoaded({
-    this.suggestedPlaces = const [],
-    this.popularPlaces = const [],
-    this.favoritePlaces = const [],
+    required this.suggestedPlaces,
+    required this.popularPlaces,
+    this.favoriteIds = const [],
   });
+
+  bool isPlaceFavorite(String placeId) => favoriteIds.contains(placeId);
 
   PlacesLoaded copyWith({
     List<Place>? suggestedPlaces,
     List<Place>? popularPlaces,
-    List<Place>? favoritePlaces,
+    List<String>? favoriteIds,
   }) {
     return PlacesLoaded(
       suggestedPlaces: suggestedPlaces ?? this.suggestedPlaces,
       popularPlaces: popularPlaces ?? this.popularPlaces,
-      favoritePlaces: favoritePlaces ?? this.favoritePlaces,
+      favoriteIds: favoriteIds ?? this.favoriteIds,
     );
   }
 }

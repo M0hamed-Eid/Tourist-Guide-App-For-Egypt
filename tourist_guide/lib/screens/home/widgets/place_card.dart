@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/bloc/favorites/favorites_bloc.dart';
-import '../../../core/bloc/places/places_bloc.dart';
 import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/models/place.dart';
 import '../../../core/theme/app_colors.dart';

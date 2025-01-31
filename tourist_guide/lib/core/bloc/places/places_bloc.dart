@@ -27,40 +27,36 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       LoadAllPlaces event,
       Emitter<PlacesState> emit,
       ) async {
+    if (state is PlacesLoading) return;
+
     emit(PlacesLoading(isSuggestedLoading: true, isPopularLoading: true));
 
     try {
-      final results = await Future.wait([
-        _firestoreService.getPlacesByCategory('suggested'),
-        _firestoreService.getPlacesByCategory('popular'),
-      ]);
-
-      final suggestedPlaces = results[0];
-      final popularPlaces = results[1];
-
-      // Get favorites if user is authenticated
+      // Explicitly type the results
+      List<dynamic> results;
       if (_authService.currentUser != null) {
-        final favoriteIds = await _firestoreService.getFavorites(
-          _authService.currentUser!.uid,
-        );
-
-        // Update isFavorite flag
-        suggestedPlaces.forEach((place) {
-          if (favoriteIds.contains(place.id)) {
-            place = place.copyWith(isFavorite: true);
-          }
-        });
-
-        popularPlaces.forEach((place) {
-          if (favoriteIds.contains(place.id)) {
-            place = place.copyWith(isFavorite: true);
-          }
-        });
+        results = await Future.wait<dynamic>([
+          _firestoreService.getPlacesByCategory('suggested'),
+          _firestoreService.getPlacesByCategory('popular'),
+          _firestoreService.getFavorites(_authService.currentUser!.uid),
+        ]);
+      } else {
+        results = await Future.wait<List<Place>>([
+          _firestoreService.getPlacesByCategory('suggested'),
+          _firestoreService.getPlacesByCategory('popular'),
+        ]);
       }
+
+      final List<Place> suggestedPlaces = results[0] as List<Place>;
+      final List<Place> popularPlaces = results[1] as List<Place>;
+      final List<String> favoriteIds = _authService.currentUser != null
+          ? (results[2] as List<String>)
+          : <String>[];
 
       emit(PlacesLoaded(
         suggestedPlaces: suggestedPlaces,
         popularPlaces: popularPlaces,
+        favoriteIds: favoriteIds,
       ));
     } catch (e) {
       emit(PlacesError(
@@ -75,16 +71,16 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       LoadSuggestedPlaces event,
       Emitter<PlacesState> emit,
       ) async {
-    if (state is PlacesLoaded) {
-      final currentState = state as PlacesLoaded;
-      emit(PlacesLoading(isSuggestedLoading: true));
+    if (state is! PlacesLoaded) return;
+    final currentState = state as PlacesLoaded;
 
-      try {
-        final suggestedPlaces = await _firestoreService.getPlacesByCategory('suggested');
-        emit(currentState.copyWith(suggestedPlaces: suggestedPlaces));
-      } catch (e) {
-        emit(PlacesError(e.toString(), isSuggestedError: true));
-      }
+    emit(PlacesLoading(isSuggestedLoading: true));
+
+    try {
+      final suggestedPlaces = await _firestoreService.getPlacesByCategory('suggested');
+      emit(currentState.copyWith(suggestedPlaces: suggestedPlaces));
+    } catch (e) {
+      emit(PlacesError(e.toString(), isSuggestedError: true));
     }
   }
 
@@ -92,16 +88,16 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       LoadPopularPlaces event,
       Emitter<PlacesState> emit,
       ) async {
-    if (state is PlacesLoaded) {
-      final currentState = state as PlacesLoaded;
-      emit(PlacesLoading(isPopularLoading: true));
+    if (state is! PlacesLoaded) return;
+    final currentState = state as PlacesLoaded;
 
-      try {
-        final popularPlaces = await _firestoreService.getPlacesByCategory('popular');
-        emit(currentState.copyWith(popularPlaces: popularPlaces));
-      } catch (e) {
-        emit(PlacesError(e.toString(), isPopularError: true));
-      }
+    emit(PlacesLoading(isPopularLoading: true));
+
+    try {
+      final popularPlaces = await _firestoreService.getPlacesByCategory('popular');
+      emit(currentState.copyWith(popularPlaces: popularPlaces));
+    } catch (e) {
+      emit(PlacesError(e.toString(), isPopularError: true));
     }
   }
 
@@ -109,39 +105,34 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       TogglePlaceFavorite event,
       Emitter<PlacesState> emit,
       ) async {
+    if (state is! PlacesLoaded) return;
+    final currentState = state as PlacesLoaded;
+
     try {
       final user = _authService.currentUser;
       if (user == null) {
         throw Exception('User must be authenticated to manage favorites');
       }
 
+      // Optimistically update UI
+      final updatedFavoriteIds = List<String>.from(currentState.favoriteIds);
+      if (updatedFavoriteIds.contains(event.placeId)) {
+        updatedFavoriteIds.remove(event.placeId);
+      } else {
+        updatedFavoriteIds.add(event.placeId);
+      }
+
+      emit(currentState.copyWith(favoriteIds: updatedFavoriteIds));
+
+      // Update in Firestore
       await _firestoreService.toggleFavorite(user.uid, event.placeId);
 
-      if (state is PlacesLoaded) {
-        final currentState = state as PlacesLoaded;
-        final favoriteIds = await _firestoreService.getFavorites(user.uid);
-
-        final updatedSuggestedPlaces = currentState.suggestedPlaces
-            .map((place) => place.copyWith(
-          isFavorite: favoriteIds.contains(place.id),
-        ))
-            .toList();
-
-        final updatedPopularPlaces = currentState.popularPlaces
-            .map((place) => place.copyWith(
-          isFavorite: favoriteIds.contains(place.id),
-        ))
-            .toList();
-
-        final updatedFavoritePlaces = await _firestoreService.getPlacesByIds(favoriteIds);
-
-        emit(currentState.copyWith(
-          suggestedPlaces: updatedSuggestedPlaces,
-          popularPlaces: updatedPopularPlaces,
-          favoritePlaces: updatedFavoritePlaces,
-        ));
-      }
+      // Get latest favorites to ensure consistency
+      final latestFavoriteIds = await _firestoreService.getFavorites(user.uid);
+      emit(currentState.copyWith(favoriteIds: latestFavoriteIds));
     } catch (e) {
+      // Revert to previous state on error
+      emit(currentState);
       emit(PlacesError(e.toString()));
     }
   }
