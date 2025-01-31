@@ -1,3 +1,5 @@
+import 'package:tourist_guide/core/models/user_profile.dart';
+
 import '../../models/user.dart';
 
 abstract class AuthState {
@@ -9,7 +11,7 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
-  final User user;
+  final UserProfile user;
   const AuthAuthenticated(this.user);
 }
 

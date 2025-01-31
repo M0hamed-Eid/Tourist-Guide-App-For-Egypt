@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tourist_guide/core/bloc/favorites/favorites_bloc.dart';
 import 'package:tourist_guide/screens/home/widgets/app_bar.dart';
 import 'package:tourist_guide/screens/home/widgets/popular_places.dart';
 import '../base_page.dart';
@@ -18,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     context.read<PlacesBloc>().add(LoadAllPlaces());
+    context.read<FavoritesBloc>().add(LoadFavorites());
   }
 
   @override

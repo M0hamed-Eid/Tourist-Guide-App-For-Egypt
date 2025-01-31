@@ -1,13 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../models/place.dart';
+import '../../services/firebase_auth_service.dart';
+import '../../services/firestore_service.dart';
 
 part 'favorites_event.dart';
 part 'favorites_state.dart';
 
 class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
-  FavoritesBloc() : super(FavoritesInitial()) {
+  final FirebaseAuthService authService;
+  final FirestoreService firestoreService;
+
+  FavoritesBloc({
+    required this.authService,
+    required this.firestoreService,
+  }) : super(FavoritesInitial()) {
     on<LoadFavorites>(_handleLoadFavorites);
     on<ToggleFavorite>(_handleToggleFavorite);
   }
@@ -18,38 +25,46 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
       ) async {
     emit(FavoritesLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final favoriteIds = prefs.getStringList('favorite_places') ?? [];
-      final favoritePlaces = AppConstants.allPlaces
-          .where((place) => favoriteIds.contains(place.id))
-          .toList();
-      emit(FavoritesLoaded(places: favoritePlaces));
+      final user = authService.currentUser;
+      if (user != null) {
+        final favoriteIds = await firestoreService.getFavorites(user.uid);
+        final favoritePlaces = AppConstants.allPlaces
+            .where((place) => favoriteIds.contains(place.id))
+            .toList();
+        emit(FavoritesLoaded(places: favoritePlaces));
+      } else {
+        emit( FavoritesError('User not authenticated'));
+      }
     } catch (e) {
       emit(FavoritesError(e.toString()));
     }
   }
+
 
   Future<void> _handleToggleFavorite(
       ToggleFavorite event,
       Emitter<FavoritesState> emit,
       ) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final favoriteIds = prefs.getStringList('favorite_places') ?? [];
-
-      if (favoriteIds.contains(event.placeId)) {
-        favoriteIds.remove(event.placeId);
-      } else {
-        favoriteIds.add(event.placeId);
+      final user = authService.currentUser;
+      if (user == null) {
+        emit( FavoritesError('User not authenticated'));
+        return;
       }
 
-      await prefs.setStringList('favorite_places', favoriteIds);
+      final currentState = state;
+      if (currentState is FavoritesLoaded) {
+        // Optimistically update UI
+        final isCurrentlyFavorite = currentState.places.any((p) => p.id == event.placeId);
+        final updatedPlaces = isCurrentlyFavorite
+            ? currentState.places.where((p) => p.id != event.placeId).toList()
+            : [...currentState.places, AppConstants.allPlaces.firstWhere((p) => p.id == event.placeId)];
 
-      final favoritePlaces = AppConstants.allPlaces
-          .where((place) => favoriteIds.contains(place.id))
-          .toList();
+        emit(FavoritesLoaded(places: updatedPlaces));
 
-      emit(FavoritesLoaded(places: favoritePlaces));
+        // Update in Firestore
+        await firestoreService.toggleFavorite(user.uid, event.placeId);
+      }
     } catch (e) {
       emit(FavoritesError(e.toString()));
     }

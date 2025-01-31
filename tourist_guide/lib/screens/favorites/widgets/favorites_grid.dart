@@ -13,33 +13,22 @@ class FavoritesGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = context.watch<ThemeBloc>().state.isDark;
-    return BlocBuilder<FavoritesBloc, FavoritesState>(
+    return BlocConsumer<FavoritesBloc, FavoritesState>(
+      listener: (context, state) {
+        if (state is FavoritesError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        }
+      },
       builder: (context, state) {
         if (state is FavoritesLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is FavoritesLoaded) {
+        }
+
+        if (state is FavoritesLoaded) {
           if (state.places.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.favorite_border,
-                    size: 64,
-                    color: AppColors.textSecondary(isDark),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No favorites yet'.tr(),
-                    style: TextStyle(
-                      color: AppColors.textSecondary(isDark),
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return const EmptyFavorites();
           }
 
           return GridView.builder(
@@ -52,38 +41,45 @@ class FavoritesGrid extends StatelessWidget {
             ),
             itemCount: state.places.length,
             itemBuilder: (context, index) {
-              return PlaceCard(place: state.places[index]);
+              return PlaceCard(
+                place: state.places[index],
+                key: ValueKey(state.places[index].id), // Add key for proper updates
+              );
             },
           );
-        } else if (state is FavoritesError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.error_outline,
-                  size: 64,
-                  color: AppColors.error,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  state.message,
-                  style: const TextStyle(color: AppColors.error),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<FavoritesBloc>().add(LoadFavorites());
-                  },
-                  child: Text('Retry'.tr()),
-                ),
-              ],
-            ),
-          );
         }
+
         return const SizedBox();
       },
+    );
+  }
+}
+
+class EmptyFavorites extends StatelessWidget {
+  const EmptyFavorites({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.favorite_border,
+            size: 64,
+            color: AppColors.textSecondary(isDark),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No favorites yet'.tr(),
+            style: TextStyle(
+              color: AppColors.textSecondary(isDark),
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

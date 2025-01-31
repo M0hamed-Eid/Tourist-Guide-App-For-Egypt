@@ -1,12 +1,10 @@
-import 'package:easy_localization/easy_localization.dart';
-
 class Place {
   final String id;
   final String nameKey;
   final String governorateKey;
   final String imageUrl;
   final String descriptionKey;
-  final bool isFavorite;
+  final String category;
 
   Place({
     required this.id,
@@ -14,7 +12,7 @@ class Place {
     required this.governorateKey,
     required this.imageUrl,
     required this.descriptionKey,
-    this.isFavorite = false,
+    this.category = '',
   });
 
   Place copyWith({
@@ -23,7 +21,7 @@ class Place {
     String? governorateKey,
     String? imageUrl,
     String? descriptionKey,
-    bool? isFavorite,
+    String? category,
   }) {
     return Place(
       id: id ?? this.id,
@@ -31,7 +29,29 @@ class Place {
       governorateKey: governorateKey ?? this.governorateKey,
       imageUrl: imageUrl ?? this.imageUrl,
       descriptionKey: descriptionKey ?? this.descriptionKey,
-      isFavorite: isFavorite ?? this.isFavorite,
+      category: category ?? this.category,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'nameKey': nameKey,
+      'governorateKey': governorateKey,
+      'imageUrl': imageUrl,
+      'descriptionKey': descriptionKey,
+      'category': category,
+    };
+  }
+
+  factory Place.fromJson(Map<String, dynamic> json) {
+    return Place(
+      id: json['id'] as String,
+      nameKey: json['nameKey'] as String,
+      governorateKey: json['governorateKey'] as String,
+      imageUrl: json['imageUrl'] as String,
+      descriptionKey: json['descriptionKey'] as String,
+      category: json['category'] as String? ?? '',
     );
   }
 }
