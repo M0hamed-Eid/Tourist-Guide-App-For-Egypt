@@ -39,28 +39,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
         onPressed: () {
           context.read<ThemeBloc>().add(ToggleTheme());
         },
-      ),
-      IconButton(
-        icon: Icon(
-          Icons.language,
-          color: AppColors.white,
-        ),
-        onPressed: () async {
-          if (context.locale == const Locale('en', 'US')) {
-            context.setLocale(const Locale('ar', 'EG'));
-          } else {
-            context.setLocale(const Locale('en', 'US'));
-          }
-
-          if (context.mounted) {
-            await Future.delayed(const Duration(milliseconds: 100));
-            Navigator.pushReplacementNamed(
-              context,
-              ModalRoute.of(context)?.settings.name ?? AppRouter.main,
-            );
-          }
-        },
-      ),
+      )
     ],
   );
 }

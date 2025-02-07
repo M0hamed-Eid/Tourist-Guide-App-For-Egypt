@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,7 +47,7 @@ class _LandmarkDetailsPageState extends State<LandmarkDetailsPage> {
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open Google Maps')),
+          SnackBar(content: Text('governments.could_not_open_maps'.tr())),
         );
       }
     }
@@ -72,7 +73,7 @@ class _LandmarkDetailsPageState extends State<LandmarkDetailsPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openInGoogleMaps,
         icon: const Icon(Icons.directions),
-        label: const Text('Navigate'),
+        label: Text('governments.navigate'.tr()),
       ),
     );
   }
@@ -82,7 +83,7 @@ class _LandmarkDetailsPageState extends State<LandmarkDetailsPage> {
       expandedHeight: 250,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(widget.landmark.name),
+        title: Text(widget.landmark.name,style: TextStyle(color: AppColors.white),),
         background: widget.landmark.image.image(  // Changed this line
           fit: BoxFit.cover,
         ),
@@ -118,7 +119,7 @@ class _LandmarkDetailsPageState extends State<LandmarkDetailsPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'About',
+            'governments.about'.tr(),
             style: AppTextTheme.textTheme.titleLarge,
           ),
           const SizedBox(height: 8),

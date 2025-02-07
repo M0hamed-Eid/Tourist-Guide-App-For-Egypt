@@ -1,4 +1,5 @@
-// lib/core/repositories/governorate_repository.dart
+import 'package:easy_localization/easy_localization.dart';
+
 import '../models/governorate.dart';
 import '../models/landmark.dart';
 import '../../gen/assets.gen.dart';
@@ -7,7 +8,7 @@ class GovernorateRepository {
   static List<Governorate> getGovernorates() {
     return [
       Governorate(
-        name: 'Cairo',
+        name: 'governorates.cairo'.tr(),
         description: 'The capital of Egypt and largest city in the Arab world',
         image: Assets.images.cairo,  // Use AssetGenImage directly
         landmarks: [
@@ -36,7 +37,7 @@ class GovernorateRepository {
         ],
       ),
       Governorate(
-        name: 'Luxor',
+        name: 'governorates.luxor'.tr(),
         description: 'Ancient Egypt\'s capital Thebes, known as the world\'s greatest open-air museum',
         image: Assets.images.luxor,  // Use AssetGenImage directly
         landmarks: [

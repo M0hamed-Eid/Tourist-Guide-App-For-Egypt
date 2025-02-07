@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -44,7 +45,7 @@ class _LandmarkCardState extends State<LandmarkCard> {
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not open Google Maps')),
+          SnackBar(content: Text('governments.could_not_open_maps'.tr())),
         );
       }
     }

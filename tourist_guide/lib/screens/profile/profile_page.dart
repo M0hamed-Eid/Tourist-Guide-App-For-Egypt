@@ -10,6 +10,7 @@ import '../../core/bloc/profile/profile_bloc.dart';
 import '../../core/bloc/profile/profile_event.dart';
 import '../../core/bloc/profile/profile_state.dart';
 import '../../core/bloc/theme/theme_bloc.dart';
+import '../../core/routes/app_router.dart';
 import '../../core/services/biometric_auth_service.dart';
 import '../../core/theme/app_colors.dart';
 import 'widgets/biometric_auth_wrapper.dart';
@@ -41,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               ListTile(
                 leading: const Icon(Icons.photo_camera),
-                title: const Text('Take a photo'),
+                title: Text('profile.take_photo'.tr()),
                 onTap: () async {
                   Navigator.pop(
                     context,
@@ -51,7 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from gallery'),
+                title: Text('profile.choose_gallery'.tr()),
                 onTap: () async {
                   Navigator.pop(
                     context,
@@ -64,8 +65,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   (bloc.state as ProfileLoaded).user?.avatarUrl != null))
                 ListTile(
                   leading: const Icon(Icons.delete, color: Colors.red),
-                  title: const Text(
-                    'Remove photo',
+                  title: Text('profile.remove_photo'.tr(),
                     style: TextStyle(color: Colors.red),
                   ),
                   onTap: () {
@@ -161,18 +161,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                     const SizedBox(height: 32),
                     _buildProfileSection(
-                      title: 'Account Settings',
+                      title: 'profile.account_settings'.tr(),
                       items: [
                         _buildListTile(
                           icon: Icons.edit,
-                          title: 'Edit Profile',
+                          title: 'profile.edit_profile'.tr(),
                           onTap: () {
                             // Navigate to edit profile
                           },
                         ),
                         _buildListTile(
                           icon: Icons.lock_outline,
-                          title: 'Change Password',
+                          title: 'profile.change_password'.tr(),
                           onTap: () {
                             // Navigate to change password
                           },
@@ -181,38 +181,82 @@ class _ProfilePageState extends State<ProfilePage> {
                           icon: Icons.language,
                           title: 'Language',
                           trailing: Text(
-                            context.locale.languageCode.toUpperCase(),
+                            context.locale.languageCode == 'en' ? 'English' : 'العربية',
                             style: TextStyle(
                               color: AppColors.primary(isDark),
                             ),
                           ),
-                          onTap: () {
-                            // Show language picker
+                          onTap: () async {
+                            final newLocale = await showDialog<Locale>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('profile.select_language'.tr()),
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ListTile(
+                                        title: const Text('English'),
+                                        trailing: context.locale.languageCode == 'en'
+                                            ? Icon(Icons.check, color: AppColors.primary(isDark))
+                                            : null,
+                                        onTap: () {
+                                          Navigator.pop(context, const Locale('en', 'US'));
+                                        },
+                                      ),
+                                      ListTile(
+                                        title: const Text('العربية'),
+                                        trailing: context.locale.languageCode == 'ar'
+                                            ? Icon(Icons.check, color: AppColors.primary(isDark))
+                                            : null,
+                                        onTap: () {
+                                          Navigator.pop(context, const Locale('ar', 'EG'));
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+
+                            if (newLocale != null && context.mounted) {
+                              context.setLocale(newLocale);
+                              // Wait for the locale change to take effect
+                              await Future.delayed(const Duration(milliseconds: 100));
+
+                              // Refresh the current route
+                              if (context.mounted) {
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  ModalRoute.of(context)?.settings.name ?? AppRouter.login,
+                                );
+                              }
+                            }
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
                     _buildProfileSection(
-                      title: 'App Settings',
+                      title: 'profile.app_settings'.tr(),
                       items: [
                         _buildListTile(
                           icon: Icons.notifications_outlined,
-                          title: 'Notifications',
+                          title: 'profile.notifications'.tr(),
                           onTap: () {
                             // Navigate to notifications settings
                           },
                         ),
                         _buildListTile(
                           icon: Icons.privacy_tip_outlined,
-                          title: 'Privacy Policy',
+                          title: 'profile.privacy_policy'.tr(),
                           onTap: () {
                             // Show privacy policy
                           },
                         ),
                         _buildListTile(
                           icon: Icons.help_outline,
-                          title: 'Help & Support',
+                          title: 'profile.help_support'.tr(),
                           onTap: () {
                             // Show help & support
                           },
@@ -233,9 +277,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Logout',
-                          style: TextStyle(
+                        child: Text('profile.logout'.tr(), style: TextStyle(
                             color: AppColors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
