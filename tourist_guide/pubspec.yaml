@@ -49,6 +49,7 @@ dependencies:
   google_maps_flutter:
   url_launcher:
   geolocator:
+  local_auth:
 
 dev_dependencies:
   flutter_test:
