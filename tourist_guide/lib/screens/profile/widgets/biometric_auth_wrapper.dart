@@ -21,8 +21,7 @@ class BiometricAuthWrapper extends StatelessWidget {
         if (state is BiometricInitial) {
           // Automatically trigger authentication check
           context.read<BiometricBloc>()
-            ..add(CheckBiometricAvailability())
-            ..add(AuthenticateUser()); // Automatically start authentication
+            .add(CheckBiometricAvailability());
           return _buildAuthenticationScreen(context);
         }
 
