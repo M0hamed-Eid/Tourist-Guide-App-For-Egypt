@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/bloc/places/places_bloc.dart';
 import '../../core/bloc/favorites/favorites_bloc.dart';
+import '../core/bloc/language/language_bloc.dart';
+import '../core/bloc/language/language_state.dart';
 import 'bottom_nav_bar.dart';
 import 'favorites/favorites_page.dart';
 import 'governments/governments_page.dart';
@@ -57,18 +59,24 @@ class _MainLayoutState extends State<MainLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(context),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: _onPageChanged,
-        physics: const NeverScrollableScrollPhysics(), // Disable swipe
-        children: _pages,
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavTapped,
-      ),
-    );
+    return BlocListener<LanguageBloc, LanguageState>(
+        listener: (context, state) {
+          if (state is LanguageLoaded) {
+            setState(() {}); // Rebuild the layout when language changes
+          }
+        },
+        child: Scaffold(
+          appBar: CustomAppBar(),
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: _onPageChanged,
+            physics: const NeverScrollableScrollPhysics(), // Disable swipe
+            children: _pages,
+          ),
+          bottomNavigationBar: CustomBottomNavBar(
+            currentIndex: _currentIndex,
+            onTap: _onNavTapped,
+          ),
+        ));
   }
 }

@@ -43,40 +43,44 @@ class CustomBottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface(isDark),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.cardShadow(isDark),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+    return Builder(
+      builder: (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface(isDark),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.cardShadow(isDark),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: onTap,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: AppColors.surface(isDark),
-        selectedItemColor: AppColors.primary(isDark),
-        unselectedItemColor: AppColors.textSecondary(isDark),
-        selectedLabelStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.normal,
-        ),
-        items: _navItems.map((item) {
-          return BottomNavigationBarItem(
-            icon: Icon(item.icon),
-            activeIcon: Icon(item.activeIcon),
-            label: item.labelKey.tr(),
-          );
-        }).toList(),
-      ),
+          child: BottomNavigationBar(
+            currentIndex: currentIndex,
+            onTap: onTap,
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: AppColors.surface(isDark),
+            selectedItemColor: AppColors.primary(isDark),
+            unselectedItemColor: AppColors.textSecondary(isDark),
+            selectedLabelStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.normal,
+            ),
+            items: _navItems.map((item) {
+              return BottomNavigationBarItem(
+                icon: Icon(item.icon),
+                activeIcon: Icon(item.activeIcon),
+                label: item.labelKey.tr(),
+              );
+            }).toList(),
+          ),
+        );
+      }
     );
   }
 }

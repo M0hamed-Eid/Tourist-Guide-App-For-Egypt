@@ -3,16 +3,17 @@ import 'package:tourist_guide/screens/auth/signup/signup_page.dart';
 import '../../screens/auth/login/login_page.dart';
 import '../../screens/governments/landmarks/landmarks_page.dart';
 import '../../screens/main_layout.dart';
+import '../../screens/profile/profile_page.dart';
 import '../models/governorate.dart';
 import '../theme/app_colors.dart';
 import 'route_transitions.dart';
 
 class AppRouter {
-
   static const String signup = '/signup';
   static const String login = '/login';
   static const String landmarks = '/landmarks';
   static const String main = '/main';
+  static const String profile = '/profile';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -28,6 +29,13 @@ class AppRouter {
           settings: settings,
         );
 
+      case profile:
+        return MaterialPageRoute(
+          builder: (_) => const ProfilePage(),
+          settings: settings,
+        );
+
+      case '/':
       case landmarks:
         if (settings.arguments is Governorate) {
           return RouteTransitions.fadeTransition(

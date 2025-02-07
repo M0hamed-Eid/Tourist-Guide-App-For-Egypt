@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tourist_guide/core/bloc/auth/auth_bloc.dart';
 import '../../core/bloc/auth/auth_event.dart';
 import '../../core/bloc/biometric/biometric_bloc.dart';
+import '../../core/bloc/language/language_bloc.dart';
+import '../../core/bloc/language/language_event.dart';
 import '../../core/bloc/profile/profile_bloc.dart';
 import '../../core/bloc/profile/profile_event.dart';
 import '../../core/bloc/profile/profile_state.dart';
@@ -179,7 +181,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         _buildListTile(
                           icon: Icons.language,
-                          title: 'Language',
+                          title: 'profile.language'.tr(),
                           trailing: Text(
                             context.locale.languageCode == 'en' ? 'English' : 'العربية',
                             style: TextStyle(
@@ -187,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           onTap: () async {
-                            final newLocale = await showDialog<Locale>(
+                            final newLocale = await showDialog<({String languageCode, String countryCode})>(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
@@ -201,7 +203,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ? Icon(Icons.check, color: AppColors.primary(isDark))
                                             : null,
                                         onTap: () {
-                                          Navigator.pop(context, const Locale('en', 'US'));
+                                          Navigator.pop(
+                                            context,
+                                            (languageCode: 'en', countryCode: 'US'),
+                                          );
                                         },
                                       ),
                                       ListTile(
@@ -210,7 +215,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ? Icon(Icons.check, color: AppColors.primary(isDark))
                                             : null,
                                         onTap: () {
-                                          Navigator.pop(context, const Locale('ar', 'EG'));
+                                          Navigator.pop(
+                                            context,
+                                            (languageCode: 'ar', countryCode: 'EG'),
+                                          );
                                         },
                                       ),
                                     ],
@@ -220,16 +228,36 @@ class _ProfilePageState extends State<ProfilePage> {
                             );
 
                             if (newLocale != null && context.mounted) {
-                              context.setLocale(newLocale);
-                              // Wait for the locale change to take effect
-                              await Future.delayed(const Duration(milliseconds: 100));
+                              // Show loading indicator
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                              );
 
-                              // Refresh the current route
+                              // Change language in bloc
+                              context.read<LanguageBloc>().add(
+                                ChangeLanguage(
+                                  languageCode: newLocale.languageCode,
+                                  countryCode: newLocale.countryCode,
+                                ),
+                              );
+
+                              // Change locale
+                              context.setLocale(Locale(newLocale.languageCode, newLocale.countryCode));
+
+                              // Wait for translations to load
+                              await Future.delayed(const Duration(milliseconds: 300));
+
+                              // Hide loading indicator
                               if (context.mounted) {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  ModalRoute.of(context)?.settings.name ?? AppRouter.login,
-                                );
+                                Navigator.pop(context);
+                                // Reload profile
+                                context.read<ProfileBloc>().add(LoadProfile());
                               }
                             }
                           },
@@ -269,6 +297,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           context.read<AuthBloc>().add(LogoutRequested());
+                          // Navigate to login page
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRouter.login,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
