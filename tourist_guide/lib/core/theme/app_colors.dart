@@ -4,6 +4,7 @@ class AppColors {
   static late bool _isDark;
   static final AppColors _instance = AppColors._internal();
 
+
   factory AppColors() {
     return _instance;
   }
@@ -13,6 +14,7 @@ class AppColors {
   static void initialize(bool isDark) {
     _isDark = isDark;
   }
+
 
   // Primary Colors
   static Color primary(bool isDark) => isDark ? const Color(0xFF42A5F5) : const Color(0xFF1976D2);

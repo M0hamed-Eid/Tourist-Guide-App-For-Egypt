@@ -74,7 +74,7 @@ void main() async {
               create: (context) => FavoritesBloc(
                 authService: context.read<FirebaseAuthService>(),
                 firestoreService: context.read<FirestoreService>(),
-              )..add(LoadFavorites()), // Load favorites immediately
+              )..add(LoadFavorites()),
             ),
             BlocProvider(
               create: (context) => ThemeBloc()..add(LoadTheme()),
@@ -101,7 +101,7 @@ class TouristGuideApp extends StatelessWidget {
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           debugShowCheckedModeBanner: false,
-          title: 'Egypt Tourist Guide'.tr(), // Add translation
+          title: 'Egypt Tourist Guide'.tr(),
           theme: currentTheme,
           themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
           onGenerateRoute: AppRouter.generateRoute,
