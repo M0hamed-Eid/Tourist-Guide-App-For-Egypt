@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/place.dart';
@@ -6,6 +8,7 @@ import '../models/user_profile.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore;
+
 
   FirestoreService({FirebaseFirestore? firestore})
       : _firestore = firestore ?? FirebaseFirestore.instance;
@@ -133,5 +136,15 @@ class FirestoreService {
     }
   }
 
+  Future<void> updateUserAvatar(String userId, String? avatarUrl) async {
+    try {
+      await _usersCollection.doc(userId).update({
+        'avatarUrl': avatarUrl,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Failed to update avatar: $e');
+    }
+  }
 
 }

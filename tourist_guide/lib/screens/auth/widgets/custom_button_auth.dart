@@ -21,7 +21,7 @@ class CustomButtonAuth extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(vertical: 13),
         onPressed:onpressed ,color: AppColors.primary(isDark),
-        textColor:  AppColors.textPrimary(isDark),
+        textColor:  AppColors.surface(isDark),
         child: Text(text),),
     );
   }
