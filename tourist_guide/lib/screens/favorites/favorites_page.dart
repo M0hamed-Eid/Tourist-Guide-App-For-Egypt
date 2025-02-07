@@ -21,12 +21,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BasePage(
-      currentIndex: 2,
-      appBar: AppBar(
-        title: Text('app.navigation.favorites'.tr()),
-      ),
-      body: const FavoritesGrid(),
-    );
+    return const FavoritesGrid();
   }
 }

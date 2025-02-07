@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tourist_guide/core/theme/app_colors.dart';
 
-import '../../../core/bloc/theme/theme_bloc.dart';
-import '../../../core/routes/app_router.dart';
+import '../core/bloc/theme/theme_bloc.dart';
+import '../core/routes/app_router.dart';
 
 @override
 PreferredSizeWidget buildAppBar(BuildContext context) {

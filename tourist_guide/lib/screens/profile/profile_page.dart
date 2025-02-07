@@ -60,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
               ),
               if (context.select((ProfileBloc bloc) =>
-              bloc.state is ProfileLoaded &&
+                  bloc.state is ProfileLoaded &&
                   (bloc.state as ProfileLoaded).user?.avatarUrl != null))
                 ListTile(
                   leading: const Icon(Icons.delete, color: Colors.red),
@@ -95,178 +95,166 @@ class _ProfilePageState extends State<ProfilePage> {
         biometricService: BiometricAuthService(),
       ),
       child: BiometricAuthWrapper(
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Profile'),
-            actions: [
-              IconButton(
-                icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-                onPressed: () {
-                  context.read<ThemeBloc>().add(ToggleTheme());
-                },
-              ),
-            ],
-          ),
-          body: BlocBuilder<ProfileBloc, ProfileState>(
-            builder: (context, state) {
-              if (state is ProfileLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+        child: BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            if (state is ProfileLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              if (state is ProfileError) {
-                return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        state.message,
-                        style: TextStyle(color: AppColors.error),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.read<ProfileBloc>().add(LoadProfile());
-                        },
-                        child: const Text('Retry'),
-                      ),
-                    ],
-                  ),
-                );
-              }
+            if (state is ProfileError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      state.message,
+                      style: TextStyle(color: AppColors.error),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<ProfileBloc>().add(LoadProfile());
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
 
-              if (state is ProfileLoaded) {
-                final user = state.user;
-                return SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 32),
-                      ProfileAvatar(
-                        imageUrl: user!.avatarUrl,
-                        imageFile: _imageFile,
-                        onTap: _pickImage,
-                        isLoading: state is ProfileUpdating,
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        user.name,
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        user.email,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary(isDark),
-                        ),
-                      ),
-                      ...[
-                        const SizedBox(height: 8),
-                        Text(
-                          user.phone,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            if (state is ProfileLoaded) {
+              final user = state.user;
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 32),
+                    ProfileAvatar(
+                      imageUrl: user!.avatarUrl,
+                      imageFile: _imageFile,
+                      onTap: _pickImage,
+                      isLoading: state is ProfileUpdating,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      user.name,
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      user.email,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: AppColors.textSecondary(isDark),
                           ),
+                    ),
+                    ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        user.phone,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: AppColors.textSecondary(isDark),
+                            ),
+                      ),
+                    ],
+                    const SizedBox(height: 32),
+                    _buildProfileSection(
+                      title: 'Account Settings',
+                      items: [
+                        _buildListTile(
+                          icon: Icons.edit,
+                          title: 'Edit Profile',
+                          onTap: () {
+                            // Navigate to edit profile
+                          },
+                        ),
+                        _buildListTile(
+                          icon: Icons.lock_outline,
+                          title: 'Change Password',
+                          onTap: () {
+                            // Navigate to change password
+                          },
+                        ),
+                        _buildListTile(
+                          icon: Icons.language,
+                          title: 'Language',
+                          trailing: Text(
+                            context.locale.languageCode.toUpperCase(),
+                            style: TextStyle(
+                              color: AppColors.primary(isDark),
+                            ),
+                          ),
+                          onTap: () {
+                            // Show language picker
+                          },
                         ),
                       ],
-                      const SizedBox(height: 32),
-                      _buildProfileSection(
-                        title: 'Account Settings',
-                        items: [
-                          _buildListTile(
-                            icon: Icons.edit,
-                            title: 'Edit Profile',
-                            onTap: () {
-                              // Navigate to edit profile
-                            },
-                          ),
-                          _buildListTile(
-                            icon: Icons.lock_outline,
-                            title: 'Change Password',
-                            onTap: () {
-                              // Navigate to change password
-                            },
-                          ),
-                          _buildListTile(
-                            icon: Icons.language,
-                            title: 'Language',
-                            trailing: Text(
-                              context.locale.languageCode.toUpperCase(),
-                              style: TextStyle(
-                                color: AppColors.primary(isDark),
-                              ),
-                            ),
-                            onTap: () {
-                              // Show language picker
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      _buildProfileSection(
-                        title: 'App Settings',
-                        items: [
-                          _buildListTile(
-                            icon: Icons.notifications_outlined,
-                            title: 'Notifications',
-                            onTap: () {
-                              // Navigate to notifications settings
-                            },
-                          ),
-                          _buildListTile(
-                            icon: Icons.privacy_tip_outlined,
-                            title: 'Privacy Policy',
-                            onTap: () {
-                              // Show privacy policy
-                            },
-                          ),
-                          _buildListTile(
-                            icon: Icons.help_outline,
-                            title: 'Help & Support',
-                            onTap: () {
-                              // Show help & support
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            context.read<AuthBloc>().add(LogoutRequested());
+                    ),
+                    const SizedBox(height: 16),
+                    _buildProfileSection(
+                      title: 'App Settings',
+                      items: [
+                        _buildListTile(
+                          icon: Icons.notifications_outlined,
+                          title: 'Notifications',
+                          onTap: () {
+                            // Navigate to notifications settings
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            minimumSize: const Size(double.infinity, 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                        ),
+                        _buildListTile(
+                          icon: Icons.privacy_tip_outlined,
+                          title: 'Privacy Policy',
+                          onTap: () {
+                            // Show privacy policy
+                          },
+                        ),
+                        _buildListTile(
+                          icon: Icons.help_outline,
+                          title: 'Help & Support',
+                          onTap: () {
+                            // Show help & support
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(LogoutRequested());
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Text(
-                            'Logout',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        ),
+                        child: const Text(
+                          'Logout',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 32),
-                    ],
-                  ),
-                );
-              }
-
-              return const Center(
-                child: Text('Something went wrong'),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                ),
               );
-            },
-          ),
-        ),// Your existing profile content
-      ),
+            }
 
+            return const Center(
+              child: Text('Something went wrong'),
+            );
+          },
+        ),
+        // Your existing profile content
+      ),
     );
   }
 
@@ -282,8 +270,8 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+                  fontWeight: FontWeight.bold,
+                ),
           ),
         ),
         const SizedBox(height: 8),
