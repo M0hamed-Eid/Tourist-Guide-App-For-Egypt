@@ -56,7 +56,7 @@ PreferredSizeWidget buildAppBar(BuildContext context) {
             await Future.delayed(const Duration(milliseconds: 100));
             Navigator.pushReplacementNamed(
               context,
-              ModalRoute.of(context)?.settings.name ?? AppRouter.home,
+              ModalRoute.of(context)?.settings.name ?? AppRouter.main,
             );
           }
         },

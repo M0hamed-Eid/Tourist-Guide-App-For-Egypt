@@ -1,7 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tourist_guide/screens/favorites/widgets/favorites_grid.dart';
-import '../base_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/bloc/favorites/favorites_bloc.dart';
 

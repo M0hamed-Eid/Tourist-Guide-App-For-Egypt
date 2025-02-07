@@ -236,6 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: const Text(
                           'Logout',
                           style: TextStyle(
+                            color: AppColors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
