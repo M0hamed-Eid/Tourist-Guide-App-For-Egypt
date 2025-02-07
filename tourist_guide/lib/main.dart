@@ -11,8 +11,8 @@ import 'core/bloc/theme/theme_bloc.dart';
 import 'core/routes/app_router.dart';
 import 'core/services/firebase_auth_service.dart';
 import 'core/services/firestore_service.dart';
+import 'core/services/local_storage_service.dart';
 import 'core/theme/app_theme.dart';
-import 'core/utils/firebase_data_uploader.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -27,9 +27,10 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-   await FirebaseDataUploader.uploadInitialData();
+  // await FirebaseDataUploader.uploadInitialData();
 
   // Initialize services
+  final localStorageService = LocalStorageService();
   final authService = FirebaseAuthService();
   final firestoreService = FirestoreService();
 
@@ -45,6 +46,8 @@ void main() async {
         providers: [
           RepositoryProvider.value(value: authService),
           RepositoryProvider.value(value: firestoreService),
+          RepositoryProvider.value(value: localStorageService),
+          BlocProvider(create: (context) => ThemeBloc()), // Theme bloc for app theme management
         ],
         child: MultiBlocProvider(
           providers: [
@@ -64,6 +67,7 @@ void main() async {
               create: (context) => ProfileBloc(
                 authService: context.read<FirebaseAuthService>(),
                 firestoreService: context.read<FirestoreService>(),
+                localStorageService: context.read<LocalStorageService>(),
               ),
             ),
             BlocProvider(

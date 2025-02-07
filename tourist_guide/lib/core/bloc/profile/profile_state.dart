@@ -1,26 +1,35 @@
 
+
 import '../../models/user_profile.dart';
 
-abstract class ProfileState {}
+abstract class ProfileState {
+  final UserProfile? user;
 
-class ProfileInitial extends ProfileState {}
+  const ProfileState({this.user});
+}
 
-class ProfileLoading extends ProfileState {}
+class ProfileInitial extends ProfileState {
+  const ProfileInitial() : super(user: null);
+}
+
+class ProfileLoading extends ProfileState {
+  const ProfileLoading({super.user});
+}
 
 class ProfileLoaded extends ProfileState {
-  final UserProfile profile;
+  const ProfileLoaded(UserProfile user) : super(user: user);
+}
 
-  ProfileLoaded(this.profile);
+class ProfileUpdating extends ProfileState {
+  const ProfileUpdating(UserProfile user) : super(user: user);
 }
 
 class ProfileUpdated extends ProfileState {
-  final UserProfile profile;
-
-  ProfileUpdated(this.profile);
+  const ProfileUpdated(UserProfile user) : super(user: user);
 }
 
 class ProfileError extends ProfileState {
   final String message;
 
-  ProfileError(this.message);
+  const ProfileError(this.message, {super.user});
 }
