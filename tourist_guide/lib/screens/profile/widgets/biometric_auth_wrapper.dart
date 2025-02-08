@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tourist_guide/core/theme/app_colors.dart';
 
 import '../../../core/bloc/biometric/biometric_bloc.dart';
 import '../../../core/bloc/biometric/biometric_event.dart';
 import '../../../core/bloc/biometric/biometric_state.dart';
+import '../../../core/bloc/theme/theme_bloc.dart';
 
 
 class BiometricAuthWrapper extends StatelessWidget {
@@ -79,8 +81,9 @@ class BiometricAuthWrapper extends StatelessWidget {
   }
 
   Widget _buildErrorScreen(String message, BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.surface(isDark),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

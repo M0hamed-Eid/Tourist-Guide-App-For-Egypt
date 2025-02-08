@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../core/models/governorate.dart';
 import '../../core/repositories/governorate_repository.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/text_themes.dart';
 import 'landmarks/landmarks_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/bloc/theme/theme_bloc.dart';
 
 class GovernmentsPage extends StatelessWidget {
   const GovernmentsPage({super.key});
@@ -11,17 +14,12 @@ class GovernmentsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final governorates = GovernorateRepository.getGovernorates();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Egyptian Governorates'),
-      ),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: governorates.length,
-        itemBuilder: (context, index) {
-          return _GovernorateCard(governorate: governorates[index]);
-        },
-      ),
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: governorates.length,
+      itemBuilder: (context, index) {
+        return _GovernorateCard(governorate: governorates[index]);
+      },
     );
   }
 }
@@ -33,6 +31,8 @@ class _GovernorateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       clipBehavior: Clip.antiAlias,
@@ -45,8 +45,11 @@ class _GovernorateCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildImage(),
-            _buildContent(),
+            Hero(
+              tag: 'governorate_${governorate.name}',
+              child: _buildImage(),
+            ),
+            _buildContent(isDark),
           ],
         ),
       ),
@@ -54,42 +57,103 @@ class _GovernorateCard extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    return Image.asset(
-      governorate.image.path,
-      height: 150,
-      fit: BoxFit.cover,
+    return Stack(
+      children: [
+        governorate.image.image(
+          height: 180,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.3),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildContent() {
-    return Padding(
+  Widget _buildContent(bool isDark) {
+    return Container(
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface(isDark),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             governorate.name,
-            style: AppTextTheme.textTheme.titleLarge,
+            style: AppTextTheme.textTheme.titleLarge?.copyWith(
+              color: AppColors.textPrimary(isDark),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             governorate.description,
             style: AppTextTheme.textTheme.bodyMedium?.copyWith(
-              color: Color(0xFF42A5F5),
+              color: AppColors.textSecondary(isDark),
             ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.location_on, size: 16, color: Color(0xFF42A5F5)),
+              Icon(
+                Icons.location_on,
+                size: 16,
+                color: AppColors.primary(isDark),
+              ),
               const SizedBox(width: 4),
               Text(
                 '${governorate.landmarks.length} Landmarks',
                 style: AppTextTheme.textTheme.bodySmall?.copyWith(
-                  color: Color(0xFF42A5F5),
+                  color: AppColors.primary(isDark),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
+              const Spacer(),
+              _buildExploreButton(isDark),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExploreButton(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.primary(isDark).withOpacity(0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Explore',
+            style: TextStyle(
+              color: AppColors.primary(isDark),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Icon(
+            Icons.arrow_forward,
+            size: 16,
+            color: AppColors.primary(isDark),
           ),
         ],
       ),

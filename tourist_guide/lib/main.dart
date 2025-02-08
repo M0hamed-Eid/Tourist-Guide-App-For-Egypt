@@ -2,8 +2,12 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/bloc/favorites/favorites_bloc.dart';
 import 'core/bloc/auth/auth_bloc.dart';
+import 'core/bloc/language/language_bloc.dart';
+import 'core/bloc/language/language_event.dart';
+import 'core/bloc/language/language_state.dart';
 import 'core/bloc/places/places_bloc.dart';
 import 'core/bloc/profile/profile_bloc.dart';
 import 'core/bloc/simple_bloc_observer.dart';
@@ -27,12 +31,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // await FirebaseDataUploader.uploadInitialData();
-
   // Initialize services
   final localStorageService = LocalStorageService();
   final authService = FirebaseAuthService();
   final firestoreService = FirestoreService();
+  final prefs = await SharedPreferences.getInstance();
 
   runApp(
     EasyLocalization(
@@ -48,6 +51,7 @@ void main() async {
           RepositoryProvider.value(value: firestoreService),
           RepositoryProvider.value(value: localStorageService),
           BlocProvider(create: (context) => ThemeBloc()), // Theme bloc for app theme management
+          RepositoryProvider.value(value: prefs),
         ],
         child: MultiBlocProvider(
           providers: [
@@ -79,6 +83,9 @@ void main() async {
             BlocProvider(
               create: (context) => ThemeBloc()..add(LoadTheme()),
             ),
+            BlocProvider(  // Add this
+              create: (context) => LanguageBloc(prefs: prefs)..add(LoadLanguage()),
+            ),
           ],
           child: const TouristGuideApp(),
         ),
@@ -96,16 +103,26 @@ class TouristGuideApp extends StatelessWidget {
       builder: (context, themeState) {
         final currentTheme = AppTheme.getTheme(themeState.isDark);
 
-        return MaterialApp(
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          debugShowCheckedModeBanner: false,
-          title: 'Egypt Tourist Guide'.tr(),
-          theme: currentTheme,
-          themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
-          onGenerateRoute: AppRouter.generateRoute,
-          initialRoute: AppRouter.login,
+        return  BlocListener<LanguageBloc, LanguageState>(  // Add this
+          listener: (context, languageState) {
+            if (languageState is LanguageLoaded) {
+              context.setLocale(Locale(
+                languageState.languageCode,
+                languageState.countryCode,
+              ));
+            }
+          },
+          child:  MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
+            debugShowCheckedModeBanner: false,
+            title: 'Egypt Tourist Guide'.tr(),
+            theme: currentTheme,
+            themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
+            onGenerateRoute: AppRouter.generateRoute,
+            initialRoute: AppRouter.login,
+          ),
         );
       },
     );

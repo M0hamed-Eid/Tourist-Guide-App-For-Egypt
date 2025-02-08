@@ -49,7 +49,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             );
           } else if (state is AuthAuthenticated) {
-            Navigator.pushReplacementNamed(context, AppRouter.home);
+            Navigator.pushReplacementNamed(context, AppRouter.main);
           }
         },
         child: SafeArea(

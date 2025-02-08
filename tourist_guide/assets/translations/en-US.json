@@ -12,6 +12,29 @@
       "profile": "Profile"
     }
   },
+  "profile": {
+    "account_settings": "Account Settings",
+    "app_settings": "App Settings",
+    "edit_profile": "Edit Profile",
+    "change_password": "Change Password",
+    "language": "Language",
+    "notifications": "Notifications",
+    "privacy_policy": "Privacy Policy",
+    "help_support": "Help & Support",
+    "logout": "Logout",
+    "take_photo": "Take a photo",
+    "choose_gallery": "Choose from gallery",
+    "remove_photo": "Remove photo",
+    "select_language": "Select Language"
+  },
+  "governments": {
+    "explore": "Explore",
+    "landmarks": "Landmarks",
+    "directions": "Directions",
+    "about": "About",
+    "navigate": "Navigate",
+    "could_not_open_maps": "Could not open Google Maps"
+  },
 
   "places": {
     "pyramids": {

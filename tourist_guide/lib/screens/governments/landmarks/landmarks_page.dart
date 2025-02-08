@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tourist_guide/core/theme/app_colors.dart';
 import '../../../core/models/governorate.dart';
 import '../../../core/models/landmark.dart';
 import '../../../core/theme/text_themes.dart';
@@ -29,7 +30,7 @@ class LandmarksPage extends StatelessWidget {
       expandedHeight: 200,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(governorate.name),
+        title: Text(governorate.name,style: TextStyle(color: AppColors.white),),
         background: Image.asset(
           governorate.image.path,
           fit: BoxFit.cover,

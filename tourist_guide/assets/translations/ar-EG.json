@@ -1,4 +1,5 @@
 {
+
   "app": {
     "title": "اكتشف مصر",
     "sections": {
@@ -11,6 +12,29 @@
       "favorites": "المفضلة",
       "profile": "الملف الشخصي"
     }
+  },
+  "profile": {
+    "account_settings": "إعدادات الحساب",
+    "app_settings": "إعدادات التطبيق",
+    "edit_profile": "تعديل الملف الشخصي",
+    "change_password": "تغيير كلمة المرور",
+    "language": "اللغة",
+    "notifications": "الإشعارات",
+    "privacy_policy": "سياسة الخصوصية",
+    "help_support": "المساعدة والدعم",
+    "logout": "تسجيل الخروج",
+    "take_photo": "التقاط صورة",
+    "choose_gallery": "اختيار من المعرض",
+    "remove_photo": "إزالة الصورة",
+    "select_language": "اختر اللغة"
+  },
+  "governments": {
+    "explore": "استكشف",
+    "landmarks": "معالم",
+    "directions": "الاتجاهات",
+    "about": "عن",
+    "navigate": "التنقل",
+    "could_not_open_maps": "تعذر فتح خرائط جوجل"
   },
 
   "places": {
