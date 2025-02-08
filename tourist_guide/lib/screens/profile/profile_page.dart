@@ -71,6 +71,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyle(color: Colors.red),
                   ),
                   onTap: () {
+                    // Clear the local image file
+                    setState(() {
+                      _imageFile = null;
+                    });
+
+                    // Dispatch the remove photo event
                     context.read<ProfileBloc>().add(RemoveProfilePhoto());
                     Navigator.pop(context);
                   },

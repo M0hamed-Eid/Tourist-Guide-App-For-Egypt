@@ -28,14 +28,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (state is! ProfileLoaded) return;
     final currentState = state as ProfileLoaded;
 
-    emit(ProfileLoading());
     try {
+      // Emit updating state while maintaining current user data
+      emit(ProfileUpdating(currentUser: currentState.user!));
+
       final user = authService.currentUser;
       if (user == null) {
         throw Exception('User not authenticated');
       }
 
-      // Save image locally
+      // Delete old image if exists
+      if (currentState.user?.avatarUrl != null) {
+        await localStorageService.deleteImage(currentState.user!.avatarUrl!);
+      }
+
+      // Save new image locally
       final imagePath = await localStorageService.saveImage(event.image, user.uid);
 
       // Update profile with new image path
@@ -53,6 +60,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(ProfileLoaded(updatedProfile!));
     } catch (e) {
       emit(ProfileError(e.toString()));
+      // Revert to previous state on error
       emit(currentState);
     }
   }
@@ -64,8 +72,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (state is! ProfileLoaded) return;
     final currentState = state as ProfileLoaded;
 
-    emit(ProfileLoading());
     try {
+      // Emit updating state while maintaining current user data
+      emit(ProfileUpdating(currentUser: currentState.user!));
+
       final user = authService.currentUser;
       if (user == null) {
         throw Exception('User not authenticated');
@@ -91,6 +101,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(ProfileLoaded(updatedProfile!));
     } catch (e) {
       emit(ProfileError(e.toString()));
+      // Revert to previous state on error
       emit(currentState);
     }
   }
@@ -121,8 +132,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       UpdateProfile event,
       Emitter<ProfileState> emit,
       ) async {
-    emit(ProfileLoading());
+    if (state is! ProfileLoaded) return;
+    final currentState = state as ProfileLoaded;
+
     try {
+      emit(ProfileUpdating(currentUser: currentState.user!));
+
       final user = authService.currentUser;
       if (user == null) {
         throw Exception('User not authenticated');
@@ -133,45 +148,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         event.profile.toJson(),
       );
 
-      emit(ProfileUpdated(event.profile));
-      // Reload profile to get latest data
-      add(LoadProfile());
+      emit(ProfileLoaded(event.profile));
     } catch (e) {
       emit(ProfileError(e.toString()));
-    }
-  }
-
-  Future<void> _handleUpdateAvatar(
-      UpdateAvatar event,
-      Emitter<ProfileState> emit,
-      ) async {
-    emit(ProfileLoading());
-    try {
-      final user = authService.currentUser;
-      if (user == null) {
-        throw Exception('User not authenticated');
-      }
-
-      final currentProfile = await firestoreService.getUserProfile(user.uid);
-      if (currentProfile == null) {
-        throw Exception('Profile not found');
-      }
-
-      final updatedProfile = currentProfile.copyWith(
-        avatarUrl: event.avatarPath,
-        updatedAt: DateTime.now(),
-      );
-
-      await firestoreService.updateUserProfile(
-        user.uid,
-        {'avatarUrl': event.avatarPath},
-      );
-
-      emit(ProfileUpdated(updatedProfile));
-      // Reload profile to get latest data
-      add(LoadProfile());
-    } catch (e) {
-      emit(ProfileError(e.toString()));
+      emit(currentState);
     }
   }
 }

@@ -21,7 +21,8 @@ class ProfileLoaded extends ProfileState {
 }
 
 class ProfileUpdating extends ProfileState {
-  const ProfileUpdating(UserProfile user) : super(user: user);
+  final UserProfile currentUser;
+  ProfileUpdating({required this.currentUser});
 }
 
 class ProfileUpdated extends ProfileState {
