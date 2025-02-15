@@ -1,19 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/user_profile.dart';
+import '../../repositories/interfaces/auth_repository.dart';
+import '../../repositories/interfaces/user_repository.dart';
+import '../../singleton/app_state_singleton.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
 
-import '../../services/firebase_auth_service.dart';
-import '../../services/firestore_service.dart';
-
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final FirebaseAuthService authService;
-  final FirestoreService firestoreService;
+  final IAuthRepository _authRepository;
+  final IUserRepository _userRepository;
+  final AppStateSingleton _appState = AppStateSingleton();
 
   AuthBloc({
-    required this.authService,
-    required this.firestoreService,
-  }) : super(AuthInitial()) {
+    required IAuthRepository authRepository,
+    required IUserRepository userRepository,
+  })  : _authRepository = authRepository,
+        _userRepository = userRepository,
+        super(AuthInitial()) {
     on<LoginRequested>(_handleLogin);
     on<SignUpRequested>(_handleSignUp);
     on<LogoutRequested>(_handleLogout);
@@ -23,16 +26,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       LoginRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final userCredential = await authService.signInWithEmailAndPassword(
+      final userCredential = await _authRepository.signInWithEmailAndPassword(
         event.email,
         event.password,
       );
 
-      final userProfile = await firestoreService.getUserProfile(
+      final userProfile = await _userRepository.getUserProfile(
         userCredential.user!.uid,
       );
 
       if (userProfile != null) {
+        _appState.updateUser(userProfile); // Update singleton
         emit(AuthAuthenticated(userProfile));
       } else {
         emit(const AuthError('User profile not found'));
@@ -41,10 +45,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthError(e.toString()));
     }
   }
-  Future<void> _handleSignUp(SignUpRequested event, Emitter<AuthState> emit) async {
+
+  Future<void> _handleSignUp(
+      SignUpRequested event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final userCredential = await authService.createUserWithEmailAndPassword(
+      final userCredential =
+          await _authRepository.createUserWithEmailAndPassword(
         event.email,
         event.password,
       );
@@ -55,12 +62,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         name: event.name,
         email: event.email,
         phone: event.phone,
-        hashedPassword: '', // Password is handled by Firebase Auth
+        hashedPassword: '',
+        // Password is handled by Firebase Auth
         createdAt: now,
         updatedAt: now,
       );
 
-      await firestoreService.saveUserProfile(
+      await _userRepository.saveUserProfile(
         userCredential.user!.uid,
         userProfile,
       );
@@ -72,10 +80,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _handleLogout(
-      LogoutRequested event, Emitter<AuthState> emit) async {
+      LogoutRequested event,
+      Emitter<AuthState> emit)
+  async {
     emit(AuthLoading());
     try {
-      await authService.signOut();
+      await _authRepository.signOut();
+      _appState.clearState(); // Clear singleton state
       emit(AuthUnauthenticated());
     } catch (e) {
       emit(AuthError(e.toString()));

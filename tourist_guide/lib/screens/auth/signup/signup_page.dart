@@ -5,6 +5,7 @@ import '../../../core/bloc/auth/auth_state.dart';
 import '../../../core/bloc/theme/theme_bloc.dart';
 import '../../../core/routes/app_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/validators/form_validator.dart';
 import '../widgets/custom_button_auth.dart';
 import '../widgets/custom_text_auth.dart';
 import '../widgets/custom_txt_field_auth.dart';
@@ -19,29 +20,34 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final formKey = GlobalKey<FormState>();
-  final nameController = TextEditingController();
-  final emailController = TextEditingController();
-  final passController = TextEditingController();
-  final phoneController = TextEditingController();
-  bool isShowPassword = true;
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _phoneController = TextEditingController();
+
+  // Form validators
+  final _emailValidator = EmailValidator();
+  final _passwordValidator = PasswordValidator();
+
+  bool _isPasswordVisible = false;
 
   @override
   void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    passController.dispose();
-    phoneController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
-  void showPassword() {
+  void _togglePasswordVisibility() {
     setState(() {
-      isShowPassword = !isShowPassword;
+      _isPasswordVisible = !_isPasswordVisible;
     });
   }
 
-  void showSuccessDialog() {
+  void _showSuccessDialog() {
     final isDark = context.read<ThemeBloc>().state.isDark;
     showDialog(
       context: context,
@@ -65,7 +71,7 @@ class _SignUpPageState extends State<SignUpPage> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              //Navigator.pushReplacementNamed(context, AppRouter.login);
+              Navigator.pushReplacementNamed(context, AppRouter.login);
             },
             child: Text(
               "Close",
@@ -83,6 +89,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = context.watch<ThemeBloc>().state.isDark;
+
     return Scaffold(
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
@@ -94,7 +101,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             );
           } else if (state is AuthAuthenticated) {
-            showSuccessDialog();
+            _showSuccessDialog();
           }
         },
         child: SafeArea(
@@ -103,7 +110,7 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Form(
-                  key: formKey,
+                  key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,15 +123,14 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(height: 48),
                       CustomTextFormFieldAuth(
                         hintText: "Enter your Full Name",
-                        labalText: "Full Name",
+                        labelText: "Full Name",
                         iconData: Icons.person_outline,
-                        mycontroller: nameController,
-                        isNunmber: false,
-                        valid: (val) {
-                          if (val == null || val.isEmpty) {
-                            return "Full Name is required ";
+                        controller: _nameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Full Name is required";
                           }
-                          if (val[0] != val[0].toUpperCase()) {
+                          if (value[0] != value[0].toUpperCase()) {
                             return "The First letter must be capitalized";
                           }
                           return null;
@@ -133,40 +139,22 @@ class _SignUpPageState extends State<SignUpPage> {
                       const SizedBox(height: 24),
                       CustomTextFormFieldAuth(
                         hintText: "Enter your email",
-                        labalText: "Email",
+                        labelText: "Email",
                         iconData: Icons.email_outlined,
-                        mycontroller: emailController,
-                        isNunmber: false,
-                        valid: (val) {
-                          if (val == null || val.isEmpty) {
-                            return "Email is required ";
-                          }
-                          if (!val.contains("@")) {
-                            return "Email must contain '@'";
-                          }
-                          return null;
-                        },
+                        controller: _emailController,
+                        validator: _emailValidator.validate,
                       ),
                       const SizedBox(height: 24),
                       CustomTextFormFieldAuth(
                         hintText: "Enter your Password",
-                        obscuretext: isShowPassword,
-                        onTapIcon: showPassword,
-                        labalText: "Password",
-                        iconData: isShowPassword
-                            ? Icons.lock_outline
-                            : Icons.lock_open,
-                        mycontroller: passController,
-                        isNunmber: false,
-                        valid: (val) {
-                          if (val == null || val.isEmpty) {
-                            return "Password is required ";
-                          }
-                          if (val.length < 6) {
-                            return "Password must be at least 6 characters";
-                          }
-                          return null;
-                        },
+                        labelText: "Password",
+                        iconData: _isPasswordVisible
+                            ? Icons.lock_open
+                            : Icons.lock_outline,
+                        controller: _passwordController,
+                        obscureText: !_isPasswordVisible,
+                        onTapIcon: _togglePasswordVisibility,
+                        validator: _passwordValidator.validate,
                       ),
                       const SizedBox(height: 24),
                       Theme(
@@ -209,7 +197,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           initialCountryCode: 'EG',
                           onChanged: (phone) {
-                            phoneController.text = phone.completeNumber;
+                            _phoneController.text = phone.completeNumber;
                           },
                           dropdownTextStyle: TextStyle(
                             color: AppColors.textPrimary(isDark),
@@ -226,20 +214,20 @@ class _SignUpPageState extends State<SignUpPage> {
                             text: state is AuthLoading
                                 ? "Creating Account..."
                                 : "Sign Up",
-                            onpressed: state is AuthLoading
+                            onPressed: state is AuthLoading
                                 ? null
                                 : () {
-                                    if (formKey.currentState!.validate()) {
-                                      context.read<AuthBloc>().add(
-                                            SignUpRequested(
-                                              name: nameController.text,
-                                              email: emailController.text,
-                                              password: passController.text,
-                                              phone: phoneController.text,
-                                            ),
-                                          );
-                                    }
-                                  },
+                              if (_formKey.currentState!.validate()) {
+                                context.read<AuthBloc>().add(
+                                  SignUpRequested(
+                                    name: _nameController.text,
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    phone: _phoneController.text,
+                                  ),
+                                );
+                              }
+                            },
                           );
                         },
                       ),

@@ -32,7 +32,7 @@ class _LandmarkCardState extends State<LandmarkCard> {
         ),
         infoWindow: InfoWindow(
           title: widget.landmark.name,
-          snippet: widget.landmark.governorate,
+          snippet: widget.landmark.governorateId,
         ),
       ),
     };
@@ -92,7 +92,7 @@ class _LandmarkCardState extends State<LandmarkCard> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            widget.landmark.governorate,
+                            widget.landmark.governorateId,
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.grey[600],
                             ),

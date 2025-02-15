@@ -24,18 +24,18 @@ class PopularPlaces extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               )
-            else if (state is PlacesLoaded && state.popularPlaces != null)
+            else if (state is PlacesLoaded)
               SizedBox(
                 height: ResponsiveUtils.isMobile(context) ? 250 : 300,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: state.popularPlaces!.length,
+                  itemCount: state.popularPlaces.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 16),
                       child: PlaceCard(
-                        place: state.popularPlaces![index],
+                        place: state.popularPlaces[index],
                         width: ResponsiveUtils.getPopularCardWidth(context),
                       ),
                     );
@@ -62,7 +62,7 @@ class PopularPlaces extends StatelessWidget {
                     ),
                   ),
                 )
-              else if (state is! PlacesLoaded || state.popularPlaces == null)
+              else if (state is! PlacesLoaded)
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),

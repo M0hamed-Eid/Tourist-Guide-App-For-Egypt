@@ -71,9 +71,9 @@ class AppConstants {
     Landmark(
       id: '1',
       name: 'Pyramids of Giza',
-      governorate: 'Giza',
+      governorateId: 'Giza',
       description: 'Ancient Egyptian pyramids complex',
-      image: Assets.images.pyramids,
+      imageAsset: Assets.images.pyramids.path,
       location: 'Al Haram, Giza Governorate',  // Added location
       rating: 4.9,  // Added rating
       latitude: 29.9792,
@@ -82,9 +82,9 @@ class AppConstants {
     Landmark(
       id: '2',
       name: 'Karnak Temple',
-      governorate: 'Luxor',
+      governorateId: 'Luxor',
       description: 'A vast temple complex dedicated to the Theban triad',
-      image: Assets.images.karnak,
+      imageAsset: Assets.images.karnak.path,
       location: 'Karnak, Luxor',  // Added location
       rating: 4.8,  // Added rating
       latitude: 25.7188,
@@ -93,9 +93,9 @@ class AppConstants {
     Landmark(
       id: '3',
       name: 'Egyptian Museum',
-      governorate: 'Cairo',
+      governorateId: 'Cairo',
       description: 'Home to an extensive collection of ancient Egyptian antiquities',
-      image: Assets.images.museum,
+      imageAsset: Assets.images.museum.path,
       location: 'Tahrir Square, Cairo',  // Added location
       rating: 4.7,  // Added rating
       latitude: 30.0478,
@@ -104,9 +104,9 @@ class AppConstants {
     Landmark(
       id: '4',
       name: 'Abu Simbel Temples',
-      governorate: 'Aswan',
+      governorateId: 'Aswan',
       description: 'Ancient temples of Ramesses II',
-      image: Assets.images.abuSimbel,
+      imageAsset: Assets.images.abuSimbel.path,
       location: 'Abu Simbel, Aswan',  // Added location
       rating: 4.9,  // Added rating
       latitude: 22.3372,
@@ -115,9 +115,9 @@ class AppConstants {
     Landmark(
       id: '5',
       name: 'Valley of the Kings',
-      governorate: 'Luxor',
+      governorateId: 'Luxor',
       description: 'Ancient burial ground of Egyptian pharaohs',
-      image: Assets.images.valleyKings,
+      imageAsset: Assets.images.valleyKings.path,
       location: 'West Bank, Luxor',  // Added location
       rating: 4.8,  // Added rating
       latitude: 25.7402,
@@ -126,9 +126,9 @@ class AppConstants {
     Landmark(
       id: '6',
       name: 'Bibliotheca Alexandrina',
-      governorate: 'Alexandria',
+      governorateId: 'Alexandria',
       description: 'Modern library and cultural center',
-      image: Assets.images.library,
+      imageAsset: Assets.images.library.path,
       location: 'Corniche, Alexandria',  // Added location
       rating: 4.6,  // Added rating
       latitude: 31.2089,

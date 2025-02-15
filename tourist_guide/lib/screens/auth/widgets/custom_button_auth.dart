@@ -6,8 +6,8 @@ import '../../../core/theme/app_colors.dart';
 
 class CustomButtonAuth extends StatelessWidget {
   final String text;
-  final void Function()? onpressed;
-  const CustomButtonAuth({super.key, required this.text, this.onpressed});
+  final void Function()? onPressed;
+  const CustomButtonAuth({super.key, required this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class CustomButtonAuth extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         padding: const EdgeInsets.symmetric(vertical: 13),
-        onPressed:onpressed ,color: AppColors.primary(isDark),
+        onPressed:onPressed ,color: AppColors.primary(isDark),
         textColor:  AppColors.surface(isDark),
         child: Text(text),),
     );
