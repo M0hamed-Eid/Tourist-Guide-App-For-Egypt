@@ -6,67 +6,61 @@ import '../../screens/main_layout.dart';
 import '../../screens/profile/profile_page.dart';
 import '../models/governorate.dart';
 import '../theme/app_colors.dart';
-import 'route_transitions.dart';
 
 class AppRouter {
-  static const String signup = '/signup';
-  static const String login = '/login';
-  static const String landmarks = '/landmarks';
-  static const String main = '/main';
-  static const String profile = '/profile';
-
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    switch (settings.name) {
-      case signup:
-        return RouteTransitions.fadeTransition(const SignUpPage());
 
-      case login:
-        return RouteTransitions.fadeTransition(LoginPage());
+    return MaterialPageRoute(
+      settings: settings,
+      builder: (context) {
+        switch (settings.name) {
+          case login:
+            return const LoginPage();
 
-      case main:
-        return MaterialPageRoute(
-          builder: (_) => const MainLayout(),
-          settings: settings,
-        );
+          case signup:
+            return const SignUpPage();
 
-      case profile:
-        return MaterialPageRoute(
-          builder: (_) => const ProfilePage(),
-          settings: settings,
-        );
+          case main:
+            return const MainLayout();
 
-      case '/':
-      case landmarks:
-        if (settings.arguments is Governorate) {
-          return RouteTransitions.fadeTransition(
-            LandmarksPage(governorate: settings.arguments as Governorate),
-          );
+          case profile:
+            return const ProfilePage();
+
+          case landmarks:
+            if (settings.arguments is Governorate) {
+              return LandmarksPage(
+                governorate: settings.arguments as Governorate,
+              );
+            }
+            return _errorRoute('Missing governorate data');
+
+          default:
+            return _errorRoute('No route defined for ${settings.name}');
         }
-        return _errorRoute('Missing governorate data');
-
-      case '/':
-        return RouteTransitions.fadeTransition(MainLayout());
-
-      default:
-        return _errorRoute('No route defined for ${settings.name}');
-    }
+      },
+    );
   }
 
-  static Route<dynamic> _errorRoute(String message) {
-    return MaterialPageRoute(
-      builder: (_) => Scaffold(
-        appBar: AppBar(title: const Text('Error')),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              message,
-              style: TextStyle(color: AppColors.error),
-              textAlign: TextAlign.center,
-            ),
+  static Widget _errorRoute(String message) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Error')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            message,
+            style: TextStyle(color: AppColors.error),
+            textAlign: TextAlign.center,
           ),
         ),
       ),
     );
   }
+
+  // Route names
+  static const String login = '/login';
+  static const String signup = '/signup';
+  static const String main = '/main';
+  static const String profile = '/profile';
+  static const String landmarks = '/landmarks';
 }

@@ -71,6 +71,13 @@ class $AssetsImagesGen {
         siwa,
         valleyKings
       ];
+
+  AssetGenImage getByPath(String imageAsset) {
+    return values.firstWhere(
+      (image) => image._assetName == imageAsset,
+      orElse: () => cairo, // return cairo as a placeholder
+    );
+  }
 }
 
 class Assets {

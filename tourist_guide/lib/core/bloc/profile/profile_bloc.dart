@@ -1,20 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../services/firebase_auth_service.dart';
-import '../../services/firestore_service.dart';
+import '../../repositories/interfaces/auth_repository.dart';
+import '../../repositories/interfaces/user_repository.dart';
 import '../../services/local_storage_service.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final FirebaseAuthService authService;
-  final FirestoreService firestoreService;
-  final LocalStorageService localStorageService;
+  final IAuthRepository _authRepository;
+  final IUserRepository _userRepository;
+  final LocalStorageService _localStorageService;
 
   ProfileBloc({
-    required this.authService,
-    required this.firestoreService,
-    required this.localStorageService,
-  }) : super(ProfileInitial()) {
+    required IAuthRepository authRepository,
+    required IUserRepository userRepository,
+    required LocalStorageService localStorageService,
+  })  : _authRepository = authRepository,
+        _userRepository = userRepository,
+        _localStorageService = localStorageService,
+        super(ProfileInitial()) {
     on<LoadProfile>(_handleLoadProfile);
     on<UpdateProfile>(_handleUpdateProfile);
     on<UpdateProfilePhoto>(_handleUpdateProfilePhoto);
@@ -32,18 +35,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       // Emit updating state while maintaining current user data
       emit(ProfileUpdating(currentUser: currentState.user!));
 
-      final user = authService.currentUser;
+      final user = _authRepository.currentUser;
       if (user == null) {
         throw Exception('User not authenticated');
       }
 
       // Delete old image if exists
       if (currentState.user?.avatarUrl != null) {
-        await localStorageService.deleteImage(currentState.user!.avatarUrl!);
+        await _localStorageService.deleteImage(currentState.user!.avatarUrl!);
       }
 
       // Save new image locally
-      final imagePath = await localStorageService.saveImage(event.image, user.uid);
+      final imagePath = await _localStorageService.saveImage(event.image, user.uid);
 
       // Update profile with new image path
       final updatedProfile = currentState.user?.copyWith(
@@ -52,7 +55,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       );
 
       // Update in Firestore
-      await firestoreService.updateUserProfile(
+      await _userRepository.updateUserProfile(
         user.uid,
         {'avatarUrl': imagePath},
       );
@@ -76,14 +79,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       // Emit updating state while maintaining current user data
       emit(ProfileUpdating(currentUser: currentState.user!));
 
-      final user = authService.currentUser;
+      final user = _authRepository.currentUser;
       if (user == null) {
         throw Exception('User not authenticated');
       }
 
       // Delete local image if exists
       if (currentState.user?.avatarUrl != null) {
-        await localStorageService.deleteImage(currentState.user!.avatarUrl!);
+        await _localStorageService.deleteImage(currentState.user!.avatarUrl!);
       }
 
       // Update profile
@@ -93,7 +96,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       );
 
       // Update in Firestore
-      await firestoreService.updateUserProfile(
+      await _userRepository.updateUserProfile(
         user.uid,
         {'avatarUrl': null},
       );
@@ -112,12 +115,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       ) async {
     emit(ProfileLoading());
     try {
-      final user = authService.currentUser;
+      final user = _authRepository.currentUser;
       if (user == null) {
         throw Exception('User not authenticated');
       }
 
-      final profile = await firestoreService.getUserProfile(user.uid);
+      final profile = await _userRepository.getUserProfile(user.uid);
       if (profile == null) {
         throw Exception('Profile not found');
       }
@@ -138,12 +141,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       emit(ProfileUpdating(currentUser: currentState.user!));
 
-      final user = authService.currentUser;
+      final user = _authRepository.currentUser;
       if (user == null) {
         throw Exception('User not authenticated');
       }
 
-      await firestoreService.updateUserProfile(
+      await _userRepository.updateUserProfile(
         user.uid,
         event.profile.toJson(),
       );

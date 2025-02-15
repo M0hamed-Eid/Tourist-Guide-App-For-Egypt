@@ -24,7 +24,7 @@ class SuggestedPlaces extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               )
-            else if (state is PlacesLoaded && state.suggestedPlaces != null)
+            else if (state is PlacesLoaded)
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -35,9 +35,9 @@ class SuggestedPlaces extends StatelessWidget {
                   mainAxisSpacing: 16,
                   childAspectRatio: 0.8,
                 ),
-                itemCount: state.suggestedPlaces!.length,
+                itemCount: state.suggestedPlaces.length,
                 itemBuilder: (context, index) {
-                  return PlaceCard(place: state.suggestedPlaces![index]);
+                  return PlaceCard(place: state.suggestedPlaces[index]);
                 },
               )
             else if (state is PlacesError && state.isSuggestedError)
@@ -60,7 +60,7 @@ class SuggestedPlaces extends StatelessWidget {
                     ),
                   ),
                 )
-              else if (state is! PlacesLoaded || state.suggestedPlaces == null)
+              else if (state is! PlacesLoaded)
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),

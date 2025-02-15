@@ -1,38 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/bloc/theme/theme_bloc.dart';
+import '../../../core/theme/app_colors.dart';
 
 class CustomTextFormFieldAuth extends StatelessWidget {
   final String hintText;
-  final String labalText;
+  final String labelText;
   final IconData iconData;
-  final TextEditingController mycontroller;
-  final String? Function (String?) valid;
-  final bool isNunmber;
-  final bool? obscuretext;
-  final void Function()? onTapIcon;
+  final TextEditingController controller;
+  final String? Function(String?) validator;
+  final bool isNumber;
+  final bool obscureText;
+  final VoidCallback? onTapIcon;
 
-  const CustomTextFormFieldAuth({super.key,
-    required this.hintText, required this.labalText,
-    required this.iconData, required this.mycontroller,
-    required this.valid, required this.isNunmber,
-    this.obscuretext ,this.onTapIcon});
+  const CustomTextFormFieldAuth({
+    super.key,
+    required this.hintText,
+    required this.labelText,
+    required this.iconData,
+    required this.controller,
+    required this.validator,
+    this.isNumber = false,
+    this.obscureText = false,
+    this.onTapIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = context.watch<ThemeBloc>().state.isDark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: TextFormField(
-        obscureText:obscuretext==null||obscuretext==false ? false:true ,
-        keyboardType: isNunmber? const TextInputType.numberWithOptions(decimal: true)
-            :TextInputType.emailAddress,
-        validator: valid,
-        controller: mycontroller,
+        obscureText: obscureText,
+        keyboardType: isNumber
+            ? const TextInputType.numberWithOptions(decimal: true)
+            : TextInputType.emailAddress,
+        validator: validator,
+        controller: controller,
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
-          contentPadding:const EdgeInsets.symmetric(vertical: 5,horizontal: 25),
-          label: Text(labalText),
-          suffixIcon:InkWell(onTap:onTapIcon ,child: Icon(iconData),) ,
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 5,
+            horizontal: 25,
+          ),
+          labelText: labelText,
+          suffixIcon: InkWell(
+            onTap: onTapIcon,
+            child: Icon(
+              iconData,
+              color: AppColors.textSecondary(isDark),
+            ),
+          ),
           hintText: hintText,
-          hintStyle:const TextStyle(fontSize: 14),
+          hintStyle: TextStyle(
+            fontSize: 14,
+            color: AppColors.textSecondary(isDark),
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(25),
           ),

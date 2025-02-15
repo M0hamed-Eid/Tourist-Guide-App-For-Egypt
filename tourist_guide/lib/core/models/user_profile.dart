@@ -1,4 +1,5 @@
-// lib/models/user_profile.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserProfile {
   final String id;
   final String name;
@@ -27,7 +28,8 @@ class UserProfile {
     String? email,
     String? phone,
     String? avatarUrl,
-    List<String>? favorites, required DateTime updatedAt,
+    List<String>? favorites,
+    required DateTime updatedAt,
   }) {
     return UserProfile(
       id: id,
@@ -65,12 +67,8 @@ class UserProfile {
       avatarUrl: json['avatarUrl'] as String?,
       hashedPassword: json['hashedPassword'] as String,
       favorites: List<String>.from(json['favorites'] ?? []),
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
-          : null,
+      createdAt: (json['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (json['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 }
